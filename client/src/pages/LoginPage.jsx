@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { Pill, Mail, Lock, Loader2 } from 'lucide-react';
+import { Activity, Bone, Dumbbell, HeartPulse, Mail, Lock, Loader2, Pill, StretchHorizontal } from 'lucide-react';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -29,6 +29,13 @@ const LoginPage = () => {
 
     return (
         <div className="login-page">
+            <div className="auth-floating-icons" aria-hidden="true">
+                <span><HeartPulse /></span>
+                <span><Dumbbell /></span>
+                <span><Activity /></span>
+                <span><Bone /></span>
+                <span><StretchHorizontal /></span>
+            </div>
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

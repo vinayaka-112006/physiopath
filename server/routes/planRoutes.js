@@ -60,6 +60,20 @@ router.put('/:token', protect, async (req, res) => {
     }
 });
 
+// Delete a plan for the logged-in therapist
+router.delete('/:token', protect, async (req, res) => {
+    try {
+        const plan = await Plan.findOneAndDelete({
+            token: req.params.token,
+            therapistId: req.user.id
+        });
+        if (!plan) return res.status(404).json({ message: 'Plan not found' });
+        res.json({ message: 'Plan deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Get a plan by token (Patient - No auth required as per PRD)
 router.get('/:token', async (req, res) => {
     try {

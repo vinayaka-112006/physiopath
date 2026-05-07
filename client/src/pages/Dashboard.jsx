@@ -11,6 +11,7 @@ import {
     Plus,
     QrCode,
     TrendingUp,
+    Trash2,
     User,
     Users
 } from 'lucide-react';
@@ -58,6 +59,18 @@ const Dashboard = () => {
         const link = `${window.location.origin}/patient/${token}`;
         await navigator.clipboard.writeText(link);
         alert('Patient link copied');
+    };
+
+    const deletePlan = async (plan) => {
+        const confirmed = window.confirm(`Delete ${plan.patientName}'s exercise plan? This cannot be undone.`);
+        if (!confirmed) return;
+
+        try {
+            await api.delete(`/plans/${plan.token}`);
+            setPlans((currentPlans) => currentPlans.filter((item) => item.token !== plan.token));
+        } catch (err) {
+            alert(err.response?.data?.message || 'Unable to delete this plan.');
+        }
     };
 
     const renderEmpty = (message) => (
@@ -176,6 +189,9 @@ const Dashboard = () => {
                                             <button onClick={() => window.open(`/patient/${plan.token}`, '_blank')} aria-label="Open patient plan">
                                                 <ExternalLink size={16} />
                                             </button>
+                                            <button className="danger-action" onClick={() => deletePlan(plan)} aria-label="Delete patient plan">
+                                                <Trash2 size={16} />
+                                            </button>
                                         </div>
                                     </article>
                                 ))}
@@ -217,6 +233,9 @@ const Dashboard = () => {
                                         </ul>
                                         <button className="secondary-action" onClick={() => navigate(`/builder/${plan.token}`)}>
                                             <Edit3 size={17} /> Edit exercise details
+                                        </button>
+                                        <button className="secondary-action danger-action-text" onClick={() => deletePlan(plan)}>
+                                            <Trash2 size={17} /> Delete plan
                                         </button>
                                     </article>
                                 ))}

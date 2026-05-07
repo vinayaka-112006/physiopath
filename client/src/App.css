@@ -3764,6 +3764,110 @@ body,
 
 .login-card {
   width: min(100%, 500px);
+  position: relative;
+  z-index: 2;
+}
+
+.login-page {
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-floating-icons {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.auth-floating-icons span {
+  position: absolute;
+  width: clamp(56px, 8vw, 96px);
+  height: clamp(56px, 8vw, 96px);
+  display: grid;
+  place-items: center;
+  border-radius: 24px;
+  color: rgba(45,106,79,.34);
+  background: rgba(255,255,255,.44);
+  border: 1px solid rgba(255,255,255,.72);
+  box-shadow: 0 18px 46px rgba(45,106,79,.1);
+  backdrop-filter: blur(16px);
+  animation: authIconFloat 8s ease-in-out infinite;
+}
+
+.auth-floating-icons svg {
+  width: 46%;
+  height: 46%;
+  stroke-width: 1.8;
+}
+
+.auth-floating-icons span:nth-child(1) {
+  left: 10%;
+  top: 16%;
+}
+
+.auth-floating-icons span:nth-child(2) {
+  right: 12%;
+  top: 18%;
+  color: rgba(245,166,35,.38);
+  animation-delay: -1.2s;
+}
+
+.auth-floating-icons span:nth-child(3) {
+  left: 16%;
+  bottom: 14%;
+  color: rgba(45,106,79,.28);
+  animation-delay: -2.4s;
+}
+
+.auth-floating-icons span:nth-child(4) {
+  right: 18%;
+  bottom: 16%;
+  color: rgba(245,166,35,.32);
+  animation-delay: -3.2s;
+}
+
+.auth-floating-icons span:nth-child(5) {
+  left: 50%;
+  top: 8%;
+  transform: translateX(-50%);
+  color: rgba(20,58,42,.26);
+  animation-delay: -4.1s;
+}
+
+@keyframes authIconFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0) rotate(4deg);
+  }
+}
+
+@media (max-width: 620px) {
+  .auth-floating-icons span {
+    opacity: .55;
+  }
+
+  .auth-floating-icons span:nth-child(1) {
+    left: -18px;
+    top: 12%;
+  }
+
+  .auth-floating-icons span:nth-child(2) {
+    right: -18px;
+    top: 22%;
+  }
+
+  .auth-floating-icons span:nth-child(3) {
+    left: -20px;
+    bottom: 10%;
+  }
+
+  .auth-floating-icons span:nth-child(4) {
+    right: -20px;
+    bottom: 8%;
+  }
 }
 
 .login-header h1 {
@@ -3920,6 +4024,20 @@ body,
 .editable-mistakes input {
   min-height: 42px;
   padding: 0 12px;
+}
+
+.table-actions .danger-action,
+.danger-action-text {
+  color: #B42318;
+  background: rgba(255, 241, 239, .86);
+  border: 1px solid rgba(180,35,24,.16);
+}
+
+.table-actions .danger-action:hover,
+.danger-action-text:hover {
+  color: #fff;
+  background: #B42318;
+  box-shadow: 0 16px 34px rgba(180,35,24,.18);
 }
 
 @media (max-width: 980px) {
