@@ -9,7 +9,12 @@ const geminiRoutes = require('./routes/geminiRoutes');
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://physiopath-client-vsr2.onrender.com",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Routes
