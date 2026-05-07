@@ -38,7 +38,7 @@ export default defineConfig({
         'medical-tech-hero.svg',
         'medical-therapy-hero.svg',
         'physio-device-hero.svg',
-        'therapy-team.svg'
+        'therapy-team.svg',
 
         "favicon.svg",
         "icons.svg",
