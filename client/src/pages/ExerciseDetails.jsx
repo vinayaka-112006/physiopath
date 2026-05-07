@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AlertTriangle, ArrowLeft, Check, Clock, Mic2, Play, ShieldCheck } from 'lucide-react';
 import LanguageSelect from '../components/LanguageSelect';
+import { getExerciseDemoUrl } from '../data/exerciseMedia';
 import { exerciseDetailText, getExerciseGuide, getStoredLanguage } from '../data/languages';
 import { db } from '../db';
 
@@ -72,6 +73,7 @@ const ExerciseDetails = () => {
     const guide = exercise ? getExerciseGuide(exercise.name, language) : null;
     const text = exerciseDetailText[language] || exerciseDetailText.en;
     const displayName = guide?.name || exercise?.name;
+    const demoUrl = getExerciseDemoUrl(exercise?.name);
     const displaySteps = useMemo(() => (
         guide?.steps || exercise?.steps.map((step) => ({
             heading: `${text.step || 'Step'} ${step.order}`,
@@ -134,7 +136,19 @@ const ExerciseDetails = () => {
             <main className="detail-main">
                 <section className="exercise-detail-hero">
                     <div className="pose-card image-pose-card">
-                        <img src={guide?.imageUrl || '/medical-therapy-hero.svg'} alt="" />
+                        {demoUrl ? (
+                            <video
+                                src={demoUrl}
+                                poster={guide?.imageUrl || exercise.imageUrl || '/medical-therapy-hero.svg'}
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                aria-label={`${displayName} exercise demonstration`}
+                            />
+                        ) : (
+                            <img src={guide?.imageUrl || exercise.imageUrl || '/medical-therapy-hero.svg'} alt="" />
+                        )}
                     </div>
                     <div className="detail-title-row">
                         <span className="eyebrow">{exercise.muscleGroup}</span>

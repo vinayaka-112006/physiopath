@@ -1066,11 +1066,13 @@ body,
   border: 1px solid rgba(185, 255, 29, 0.34);
 }
 
-.image-pose-card img {
+.image-pose-card img,
+.image-pose-card video {
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 0.82;
+  display: block;
 }
 
 .panel-illustration,
