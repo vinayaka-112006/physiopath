@@ -58,6 +58,7 @@ const ExerciseDetails = () => {
     const [plan, setPlan] = useState(null);
     const [language, setLanguage] = useState(getStoredLanguage);
     const [isSpeaking, setIsSpeaking] = useState(false);
+    const [mediaMode, setMediaMode] = useState('video');
 
     useEffect(() => {
         db.plans.get(token).then(setPlan);
@@ -74,6 +75,7 @@ const ExerciseDetails = () => {
     const text = exerciseDetailText[language] || exerciseDetailText.en;
     const displayName = guide?.name || exercise?.name;
     const demoUrl = getExerciseDemoUrl(exercise?.name);
+    const stillImageUrl = guide?.imageUrl || exercise?.imageUrl || '/medical-therapy-hero.svg';
     const displaySteps = useMemo(() => (
         guide?.steps || exercise?.steps.map((step) => ({
             heading: `${text.step || 'Step'} ${step.order}`,
@@ -136,10 +138,10 @@ const ExerciseDetails = () => {
             <main className="detail-main">
                 <section className="exercise-detail-hero">
                     <div className="pose-card image-pose-card">
-                        {demoUrl ? (
+                        {mediaMode === 'video' && demoUrl ? (
                             <video
                                 src={demoUrl}
-                                poster={guide?.imageUrl || exercise.imageUrl || '/medical-therapy-hero.svg'}
+                                poster={stillImageUrl}
                                 autoPlay
                                 loop
                                 muted
@@ -147,7 +149,25 @@ const ExerciseDetails = () => {
                                 aria-label={`${displayName} exercise demonstration`}
                             />
                         ) : (
-                            <img src={guide?.imageUrl || exercise.imageUrl || '/medical-therapy-hero.svg'} alt="" />
+                            <img src={stillImageUrl} alt={`${displayName} exercise illustration`} />
+                        )}
+                        {demoUrl && (
+                            <div className="media-toggle" aria-label="Exercise media selector">
+                                <button
+                                    type="button"
+                                    className={mediaMode === 'image' ? 'active' : ''}
+                                    onClick={() => setMediaMode('image')}
+                                >
+                                    Image
+                                </button>
+                                <button
+                                    type="button"
+                                    className={mediaMode === 'video' ? 'active' : ''}
+                                    onClick={() => setMediaMode('video')}
+                                >
+                                    Video
+                                </button>
+                            </div>
                         )}
                     </div>
                     <div className="detail-title-row">
