@@ -29,8 +29,8 @@ app.use(
   })
 );
 
-// Handle preflight requests
-app.options("*", cors());
+// Express 5 compatible preflight handler
+app.options("/(.*)", cors());
 
 app.use(express.json());
 
