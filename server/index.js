@@ -17,10 +17,6 @@ app.use(
       "https://physiopath-client-vsr2.onrender.com",
     ],
     credentials: true,
-  }),
-
-    origin: "https://physiopath-client-vsr2.onrender.com",
-    credentials: true,
   })
 
 );
