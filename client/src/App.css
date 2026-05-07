@@ -1075,10 +1075,15 @@ body,
   display: block;
 }
 
+.exercise-media-block {
+  margin-bottom: 18px;
+}
+
+.exercise-media-block .pose-card {
+  margin-bottom: 10px;
+}
+
 .media-toggle {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
   display: inline-flex;
   gap: 4px;
   padding: 4px;

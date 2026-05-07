@@ -137,20 +137,22 @@ const ExerciseDetails = () => {
 
             <main className="detail-main">
                 <section className="exercise-detail-hero">
-                    <div className="pose-card image-pose-card">
-                        {mediaMode === 'video' && demoUrl ? (
-                            <video
-                                src={demoUrl}
-                                poster={stillImageUrl}
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                aria-label={`${displayName} exercise demonstration`}
-                            />
-                        ) : (
-                            <img src={stillImageUrl} alt={`${displayName} exercise illustration`} />
-                        )}
+                    <div className="exercise-media-block">
+                        <div className="pose-card image-pose-card">
+                            {mediaMode === 'video' && demoUrl ? (
+                                <video
+                                    src={demoUrl}
+                                    poster={stillImageUrl}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    aria-label={`${displayName} exercise demonstration`}
+                                />
+                            ) : (
+                                <img src={stillImageUrl} alt={`${displayName} exercise illustration`} />
+                            )}
+                        </div>
                         {demoUrl && (
                             <div className="media-toggle" aria-label="Exercise media selector">
                                 <button
