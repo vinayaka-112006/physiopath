@@ -8,6 +8,7 @@ import './index.css'
 
 import Dashboard from './pages/Dashboard'
 import PlanBuilder from './pages/PlanBuilder'
+import DoctorProfile from './pages/DoctorProfile'
 
 import PatientPortal from './pages/PatientPortal'
 import WorkoutEngine from './pages/WorkoutEngine'
@@ -51,6 +52,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <PlanBuilder />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/doctor-profile" 
+        element={
+          <ProtectedRoute>
+            <DoctorProfile />
           </ProtectedRoute>
         } 
       />

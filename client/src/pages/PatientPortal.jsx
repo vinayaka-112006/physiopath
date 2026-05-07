@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { QRCodeCanvas } from 'qrcode.react';
 import {
     Activity,
     AlertCircle,
@@ -15,6 +16,7 @@ import {
     WifiOff
 } from 'lucide-react';
 import api from '../api/client';
+import ContactDoctorButton from '../components/ContactDoctorButton';
 import LanguageSelect from '../components/LanguageSelect';
 import { db } from '../db';
 import { getExerciseGuide, getStoredLanguage, patientUiText } from '../data/languages';
@@ -32,6 +34,7 @@ const PatientPortal = () => {
 
     const today = todayKey();
     const text = patientUiText[language] || patientUiText.en;
+    const patientShareUrl = `${window.location.origin}/patient/${token}`;
 
     useEffect(() => {
         const initPlan = async () => {
@@ -74,6 +77,14 @@ const PatientPortal = () => {
         const updatedLog = { ...dailyLog, completedExerciseIds };
         await db.daily_logs.put(updatedLog);
         setDailyLog(updatedLog);
+
+        if (plan && completedExerciseIds.length >= plan.exercises.length) {
+            try {
+                await api.post(`/plans/${token}/complete`, { completedExerciseIds });
+            } catch (error) {
+                console.warn('Unable to sync completed plan yet:', error.response?.data?.message || error.message);
+            }
+        }
     };
 
     const stats = useMemo(() => {
@@ -210,6 +221,22 @@ const PatientPortal = () => {
                     <Play fill="currentColor" size={20} />
                     {text.startWorkout}
                 </button>
+
+                <ContactDoctorButton
+                    doctorName={plan.doctorName || plan.therapistName || 'PhysioPath Therapist'}
+                    doctorPhoneNumber={plan.doctorPhoneNumber || '+91 98765 43210'}
+                />
+
+                <section className="patient-qr-card">
+                    <div>
+                        <span className="eyebrow">Plan QR</span>
+                        <h2>Scan to open this plan</h2>
+                        <p>This QR links directly to your PhysioPath exercise plan.</p>
+                    </div>
+                    <div className="patient-qr-box">
+                        <QRCodeCanvas value={patientShareUrl} size={132} />
+                    </div>
+                </section>
 
                 <div className="warning-note">
                     <AlertCircle size={16} />

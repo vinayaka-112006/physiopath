@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle2, ChevronRight, Pause, Play, RotateCcw, ShieldAlert, Volume2, VolumeX, X } from 'lucide-react';
+import api from '../api/client';
 import { db } from '../db';
 import { getExerciseGuide, getStoredLanguage, workoutUiText } from '../data/languages';
 
@@ -167,6 +168,12 @@ const WorkoutEngine = () => {
             await db.daily_logs.update(log.id, { completedExerciseIds: allIds });
         } else {
             await db.daily_logs.add({ token, date: today, completedExerciseIds: allIds });
+        }
+
+        try {
+            await api.post(`/plans/${token}/complete`, { completedExerciseIds: allIds });
+        } catch (error) {
+            console.warn('Unable to sync completed plan yet:', error.response?.data?.message || error.message);
         }
     };
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
     Activity,
     CalendarDays,
+    CheckCircle2,
     ClipboardList,
     Copy,
     Edit3,
@@ -15,6 +16,7 @@ import {
     User,
     Users
 } from 'lucide-react';
+import { QRCodeCanvas } from 'qrcode.react';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 
@@ -22,23 +24,29 @@ const Dashboard = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [plans, setPlans] = useState([]);
+    const [completedPlans, setCompletedPlans] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [activeTab, setActiveTab] = useState('plans');
+    const [qrPlan, setQrPlan] = useState(null);
 
     useEffect(() => {
-        const loadPlans = async () => {
+        const loadDashboardData = async () => {
             try {
-                const response = await api.get('/plans');
-                setPlans(response.data);
+                const [plansResponse, completedResponse] = await Promise.all([
+                    api.get('/plans'),
+                    api.get('/plans/completed')
+                ]);
+                setPlans(plansResponse.data);
+                setCompletedPlans(completedResponse.data);
             } catch (err) {
-                setError(err.response?.data?.message || 'Unable to load plans');
+                setError(err.response?.data?.message || 'Unable to load dashboard data');
             } finally {
                 setLoading(false);
             }
         };
 
-        loadPlans();
+        loadDashboardData();
     }, []);
 
     const metrics = useMemo(() => {
@@ -61,6 +69,8 @@ const Dashboard = () => {
         alert('Patient link copied');
     };
 
+    const getPatientLink = (token) => `${window.location.origin}/patient/${token}`;
+
     const deletePlan = async (plan) => {
         const confirmed = window.confirm(`Delete ${plan.patientName}'s exercise plan? This cannot be undone.`);
         if (!confirmed) return;
@@ -69,7 +79,12 @@ const Dashboard = () => {
             await api.delete(`/plans/${plan.token}`);
             setPlans((currentPlans) => currentPlans.filter((item) => item.token !== plan.token));
         } catch (err) {
-            alert(err.response?.data?.message || 'Unable to delete this plan.');
+            if (err.response?.status === 404) {
+                setPlans((currentPlans) => currentPlans.filter((item) => item.token !== plan.token));
+                alert('This plan was already removed or archived.');
+                return;
+            }
+            alert(err.response?.data?.message || 'Unable to delete this plan. Please restart the backend and try again.');
         }
     };
 
@@ -96,6 +111,12 @@ const Dashboard = () => {
                     </button>
                     <button className={activeTab === 'progress' ? 'active' : ''} onClick={() => setActiveTab('progress')}>
                         <Activity size={20} /> Progress
+                    </button>
+                    <button className={activeTab === 'completed' ? 'active' : ''} onClick={() => setActiveTab('completed')}>
+                        <CheckCircle2 size={20} /> Completed
+                    </button>
+                    <button onClick={() => navigate('/doctor-profile')}>
+                        <User size={20} /> Profile
                     </button>
                 </nav>
             </aside>
@@ -147,6 +168,11 @@ const Dashboard = () => {
                         <QrCode size={22} />
                         <strong>{metrics.sharedThisWeek}</strong>
                         <span>Shared this week</span>
+                    </article>
+                    <article>
+                        <CheckCircle2 size={22} />
+                        <strong>{completedPlans.length}</strong>
+                        <span>Completed patients</span>
                     </article>
                 </section>
 
@@ -231,12 +257,17 @@ const Dashboard = () => {
                                                 <li key={`${plan.token}-${exercise.id}`}>{exercise.name} · {exercise.sets}x{exercise.reps}</li>
                                             ))}
                                         </ul>
-                                        <button className="secondary-action" onClick={() => navigate(`/builder/${plan.token}`)}>
-                                            <Edit3 size={17} /> Edit exercise details
-                                        </button>
-                                        <button className="secondary-action danger-action-text" onClick={() => deletePlan(plan)}>
-                                            <Trash2 size={17} /> Delete plan
-                                        </button>
+                                        <div className="patient-summary-actions">
+                                            <button className="secondary-action" onClick={() => navigate(`/builder/${plan.token}`)}>
+                                                <Edit3 size={17} /> Edit
+                                            </button>
+                                            <button className="secondary-action" onClick={() => setQrPlan(plan)}>
+                                                <QrCode size={17} /> QR
+                                            </button>
+                                            <button className="secondary-action danger-action-text" onClick={() => deletePlan(plan)}>
+                                                <Trash2 size={17} /> Delete
+                                            </button>
+                                        </div>
                                     </article>
                                 ))}
                             </div>
@@ -280,6 +311,34 @@ const Dashboard = () => {
                     </section>
                 )}
 
+                {activeTab === 'completed' && (
+                    <section className="doctor-panel">
+                        <div className="panel-title-row">
+                            <div>
+                                <span className="eyebrow">Completed care</span>
+                                <h2>{completedPlans.length} patients completed their plan</h2>
+                            </div>
+                            <CheckCircle2 size={28} />
+                        </div>
+                        {loading && renderEmpty('Loading completed patients...')}
+                        {!loading && completedPlans.length === 0 && renderEmpty('No completed patients yet. Finished plans will appear here after their duration ends.')}
+                        {!loading && completedPlans.length > 0 && (
+                            <div className="completed-patients-grid">
+                                {completedPlans.map((record) => (
+                                    <article key={record.originalPlanToken} className="completed-patient-card">
+                                        <span className="brand-mark">{record.patientName.charAt(0).toUpperCase()}</span>
+                                        <div>
+                                            <strong>{record.patientName}</strong>
+                                            <p>{record.exerciseCount} exercises completed over {record.durationWeeks} weeks</p>
+                                            <small>Completed {new Date(record.completedAt).toLocaleDateString()}</small>
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+                )}
+
                 <section className="doctor-panel guide-panel">
                     <img className="panel-illustration" src="/medical-plan.svg" alt="" />
                     <div>
@@ -291,6 +350,25 @@ const Dashboard = () => {
                     </button>
                 </section>
             </main>
+
+            {qrPlan && (
+                <div className="modal-overlay" onClick={() => setQrPlan(null)}>
+                    <div className="modal-content success-modal dashboard-qr-modal" onClick={(event) => event.stopPropagation()}>
+                        <div className="success-header">
+                            <h2>{qrPlan.patientName}'s QR Code</h2>
+                            <p>Scan this code to open the patient exercise plan.</p>
+                        </div>
+                        <div className="qr-container">
+                            <QRCodeCanvas value={getPatientLink(qrPlan.token)} size={220} />
+                        </div>
+                        <div className="share-link-box">
+                            <input type="text" readOnly value={getPatientLink(qrPlan.token)} />
+                            <button onClick={() => copyPatientLink(qrPlan.token)}>Copy</button>
+                        </div>
+                        <button className="done-btn" onClick={() => setQrPlan(null)}>Close</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
