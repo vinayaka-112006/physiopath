@@ -196,6 +196,14 @@ const WorkoutEngine = () => {
         completeSetOrRest(nextRep);
     };
 
+    const syncCompletedExercises = async (completedExerciseIds) => {
+        try {
+            await api.post(`/plans/${token}/progress`, { completedExerciseIds });
+        } catch (error) {
+            console.warn('Unable to sync workout progress yet:', error.response?.data?.message || error.message);
+        }
+    };
+
     const acceptVoiceRep = (spokenNumber) => {
         const exercise = currentExerciseRef.current;
         if (!exercise || mode !== 'ACTIVE') return;
@@ -272,6 +280,7 @@ const WorkoutEngine = () => {
         }
 
         if (currentIndex < totalExercises - 1) {
+            void syncCompletedExercises(plan.exercises.slice(0, currentIndex + 1).map((exercise) => exercise.id));
             setCurrentIndex((value) => value + 1);
             return;
         }

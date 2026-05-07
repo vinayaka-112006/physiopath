@@ -4126,6 +4126,244 @@ body,
   color: var(--muted);
 }
 
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.analytics-card {
+  min-height: 280px;
+  padding: 18px;
+  color: var(--ink);
+  background: rgba(255,255,255,.66);
+  border: 1px solid rgba(255,255,255,.86);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(20px);
+}
+
+.analytics-card.wide {
+  min-height: auto;
+  grid-column: span 2;
+}
+
+.analytics-card h3 {
+  margin: 8px 0 18px;
+  color: var(--primary-dark);
+  font-size: 1.35rem;
+}
+
+.bar-chart {
+  height: 170px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  align-items: end;
+  padding-top: 16px;
+}
+
+.bar-chart-item {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 8px;
+  align-items: end;
+  text-align: center;
+}
+
+.bar-chart-item span {
+  width: 100%;
+  min-height: 10px;
+  border-radius: 999px 999px 8px 8px;
+  background: linear-gradient(180deg, var(--primary), #4F9A76);
+  box-shadow: 0 12px 22px rgba(45,106,79,.18);
+  transition: height .4s ease;
+}
+
+.bar-chart-item small,
+.analytics-legend,
+.horizontal-bars span,
+.analytics-stat-row span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.status-donut {
+  width: 180px;
+  height: 180px;
+  display: grid;
+  place-items: center;
+  margin: 12px auto;
+  border-radius: 50%;
+  background: conic-gradient(var(--primary) var(--active), var(--accent) 0);
+  box-shadow: 0 18px 42px rgba(45,106,79,.16);
+  position: relative;
+}
+
+.status-donut::before {
+  content: "";
+  position: absolute;
+  inset: 24px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.92);
+}
+
+.status-donut strong,
+.status-donut span {
+  position: relative;
+  z-index: 1;
+}
+
+.status-donut strong {
+  align-self: end;
+  color: var(--primary-dark);
+  font-size: 2rem;
+}
+
+.status-donut span {
+  align-self: start;
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.analytics-legend {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+
+.analytics-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.analytics-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+.analytics-legend .amber-dot {
+  background: var(--accent);
+}
+
+.status-three-chart {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.status-three-item {
+  display: grid;
+  grid-template-columns: 64px 110px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.status-three-item strong {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  color: var(--primary-dark);
+  background: rgba(45,106,79,.1);
+  font-size: 1.45rem;
+}
+
+.status-three-item span {
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.status-three-item em {
+  height: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(45,106,79,.12);
+}
+
+.status-three-item i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+}
+
+.status-three-item.pending strong {
+  color: #7A4B00;
+  background: rgba(245,166,35,.16);
+}
+
+.status-three-item.pending i {
+  background: var(--accent);
+}
+
+.status-three-item.progress strong {
+  color: #1D4ED8;
+  background: rgba(59,130,246,.12);
+}
+
+.status-three-item.progress i {
+  background: #3B82F6;
+}
+
+.horizontal-bars {
+  display: grid;
+  gap: 14px;
+}
+
+.horizontal-bars > div {
+  display: grid;
+  gap: 8px;
+}
+
+.horizontal-bars div div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.horizontal-bars strong {
+  color: var(--primary-dark);
+}
+
+.horizontal-bars em {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(45,106,79,.12);
+}
+
+.horizontal-bars i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+.analytics-stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.analytics-stat-row div {
+  padding: 18px;
+  border-radius: 14px;
+  background: rgba(45,106,79,.08);
+}
+
+.analytics-stat-row strong {
+  display: block;
+  color: var(--primary-dark);
+  font-size: 2rem;
+}
+
 .progress-overview-card {
   display: grid;
   grid-template-columns: 1.1fr 1fr auto auto;
@@ -4592,8 +4830,15 @@ body,
   .patients-grid,
   .progress-overview-card,
   .completed-patients-grid,
+  .analytics-grid,
+  .analytics-card.wide,
+  .analytics-stat-row,
   .doctor-metrics {
     grid-template-columns: 1fr;
+  }
+
+  .analytics-card.wide {
+    grid-column: auto;
   }
 
   .patient-table article {

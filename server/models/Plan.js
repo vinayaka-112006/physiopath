@@ -25,6 +25,10 @@ const planSchema = new mongoose.Schema({
     patientName: { type: String, required: true },
     durationWeeks: { type: Number, default: 4 },
     exercises: [exerciseSchema],
+    completedExerciseIds: [{ type: String }],
+    progressPercent: { type: Number, default: 0 },
+    status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' },
+    lastProgressAt: { type: Date },
     expiresAt: { type: Date }
 }, { timestamps: true });
 

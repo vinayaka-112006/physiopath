@@ -19,12 +19,13 @@ const protect = (req, res, next) => {
     }
 };
 
-const getCompletionDate = (plan) => {
-    const createdAt = new Date(plan.createdAt);
-    return new Date(createdAt.getTime() + (plan.durationWeeks || 4) * 7 * 24 * 60 * 60 * 1000);
-};
-
 const archivePlan = async (plan, completedAt = new Date()) => {
+    plan.completedExerciseIds = plan.exercises.map((exercise) => exercise.id);
+    plan.progressPercent = 100;
+    plan.status = 'completed';
+    plan.lastProgressAt = completedAt;
+    await plan.save();
+
     const completed = await CompletedPlan.findOneAndUpdate(
         { therapistId: plan.therapistId, originalPlanToken: plan.token },
         {
@@ -41,14 +42,27 @@ const archivePlan = async (plan, completedAt = new Date()) => {
     return completed;
 };
 
+const applyPlanProgress = async (plan, completedExerciseIds = []) => {
+    const uniqueIds = [...new Set(completedExerciseIds.map(String))];
+    const totalExercises = plan.exercises?.length || 0;
+    const validCompleted = uniqueIds.filter((id) => plan.exercises.some((exercise) => exercise.id === id));
+    const progressPercent = totalExercises ? Math.round((validCompleted.length / totalExercises) * 100) : 0;
+
+    plan.completedExerciseIds = validCompleted;
+    plan.progressPercent = progressPercent;
+    plan.status = progressPercent >= 100 ? 'completed' : progressPercent > 0 ? 'in_progress' : 'pending';
+    plan.lastProgressAt = new Date();
+    await plan.save();
+    return plan;
+};
+
 const archiveCompletedPlans = async (therapistId) => {
     const plans = await Plan.find({ therapistId });
-    const now = new Date();
-    const completedPlans = plans.filter((plan) => getCompletionDate(plan) <= now);
+    const completedPlans = plans.filter((plan) => plan.status === 'completed' || plan.progressPercent >= 100);
 
     if (!completedPlans.length) return [];
 
-    await Promise.all(completedPlans.map((plan) => archivePlan(plan, getCompletionDate(plan))));
+    await Promise.all(completedPlans.map((plan) => archivePlan(plan, plan.lastProgressAt || new Date())));
 
     return completedPlans;
 };
@@ -75,7 +89,7 @@ router.get('/', protect, async (req, res) => {
         await archiveCompletedPlans(req.user.id);
         const plans = await Plan.find({ therapistId: req.user.id })
             .sort({ createdAt: -1 })
-            .select('token patientName durationWeeks exercises createdAt updatedAt');
+            .select('token patientName durationWeeks exercises completedExerciseIds progressPercent status lastProgressAt createdAt updatedAt');
         res.json(plans);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -106,6 +120,7 @@ router.post('/:token/complete', async (req, res) => {
         }
 
         const completedExerciseIds = req.body?.completedExerciseIds || [];
+        await applyPlanProgress(plan, completedExerciseIds);
         const totalExercises = plan.exercises?.length || 0;
         const completedCount = new Set(completedExerciseIds).size;
 
@@ -119,6 +134,27 @@ router.post('/:token/complete', async (req, res) => {
 
         const completed = await archivePlan(plan, new Date());
         res.json({ completed: true, record: completed });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Sync patient progress without requiring login
+router.post('/:token/progress', async (req, res) => {
+    try {
+        const plan = await Plan.findOne({ token: req.params.token });
+        if (!plan) {
+            const completed = await CompletedPlan.findOne({ originalPlanToken: req.params.token });
+            if (completed) return res.json({ status: 'completed', progressPercent: 100, alreadyArchived: true });
+            return res.status(404).json({ message: 'Plan not found' });
+        }
+
+        const updatedPlan = await applyPlanProgress(plan, req.body?.completedExerciseIds || []);
+        res.json({
+            status: updatedPlan.status,
+            progressPercent: updatedPlan.progressPercent,
+            completedExerciseIds: updatedPlan.completedExerciseIds
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

@@ -81,6 +81,12 @@ const PatientPortal = () => {
         await db.daily_logs.put(updatedLog);
         setDailyLog(updatedLog);
 
+        try {
+            await api.post(`/plans/${token}/progress`, { completedExerciseIds });
+        } catch (error) {
+            console.warn('Unable to sync progress yet:', error.response?.data?.message || error.message);
+        }
+
         if (plan && completedExerciseIds.length >= plan.exercises.length) {
             try {
                 await api.post(`/plans/${token}/complete`, { completedExerciseIds });
