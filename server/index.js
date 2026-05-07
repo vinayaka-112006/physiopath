@@ -13,8 +13,7 @@ app.use(
   cors({
 
     origin: [
-      "https://physiopath-client.onrender.com",
-      "https://physiopath-client-vsr2.onrender.com",
+      "https://physiopath-sandy.vercel.app/",
     ],
     credentials: true,
   })
