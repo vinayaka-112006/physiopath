@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, Save, Plus, Trash2, Search, Info, AlertTriangle } from 'lucide-react';
@@ -55,6 +55,7 @@ const PlanBuilder = () => {
                     id: ex.id,
                     name: ex.name,
                     muscleGroup: ex.muscleGroup,
+                    description: ex.description,
                     sets: parseInt(ex.sets),
                     reps: parseInt(ex.reps),
                     restSeconds: parseInt(ex.restSeconds),

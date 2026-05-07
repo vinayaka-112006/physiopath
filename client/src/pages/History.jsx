@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Award, Calendar as CalendarIcon, CheckCircle2, ChevronLeft, Flame, TrendingUp } from 'lucide-react';
 import { db } from '../db';
-import { motion } from 'framer-motion';
-import { ChevronLeft, Award, TrendingUp, Calendar as CalendarIcon, CheckCircle } from 'lucide-react';
+import { getStoredLanguage, historyUiText } from '../data/languages';
 
 const History = () => {
     const { token } = useParams();
@@ -10,6 +10,8 @@ const History = () => {
     const [logs, setLogs] = useState([]);
     const [plan, setPlan] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [language] = useState(getStoredLanguage);
+    const text = historyUiText[language] || historyUiText.en;
 
     useEffect(() => {
         const loadHistory = async () => {
@@ -24,103 +26,109 @@ const History = () => {
         loadHistory();
     }, [token]);
 
-    // Simple heatmap generation for last 28 days
-    const generateHeatmap = () => {
+    const heatmap = useMemo(() => {
         const cells = [];
         const today = new Date();
-        for (let i = 27; i >= 0; i--) {
+        for (let i = 27; i >= 0; i -= 1) {
             const date = new Date(today);
             date.setDate(today.getDate() - i);
             const dateStr = date.toISOString().split('T')[0];
-            const log = logs.find(l => l.date === dateStr);
-            const intensity = log ? (log.completedExerciseIds.length / (plan?.exercises.length || 1)) : 0;
+            const log = logs.find((item) => item.date === dateStr);
+            const intensity = log ? log.completedExerciseIds.length / Math.max(plan?.exercises.length || 1, 1) : 0;
             cells.push({ date: dateStr, intensity });
         }
         return cells;
-    };
+    }, [logs, plan?.exercises.length]);
 
-    if (loading) return <div className="loading-screen">Loading history...</div>;
+    if (loading) return <div className="loading-screen">Loading progress...</div>;
 
-    const streak = logs.length; // Simplified streak for prototype
+    const completedDays = logs.filter((log) => log.completedExerciseIds?.length > 0).length;
+    const totalCompleted = logs.reduce((sum, log) => sum + (log.completedExerciseIds?.length || 0), 0);
+    const consistency = Math.round((completedDays / 28) * 100);
 
     return (
-        <div className="patient-container">
-            <header className="patient-header">
-                <button onClick={() => navigate(`/patient/${token}`)} className="back-btn-patient">
-                    <ChevronLeft size={24} />
+        <div className="patient-shell">
+            <header className="patient-hero progress-hero">
+                <button className="back-inline" onClick={() => navigate(`/patient/${token}`)}>
+                    <ChevronLeft size={20} />
+                    {text.today}
                 </button>
-                <h1>Your Progress</h1>
-                <p>Keep up the great work, {plan?.patientName}!</p>
-            </header>
+                <span className="eyebrow">{text.progressDashboard}</span>
+                <h1>{plan?.patientName || 'Patient'} {text.recovery}</h1>
 
-            <main className="patient-content">
-                <div className="stats-summary card">
-                    <div className="stat-item">
-                        <Award className="streak-icon" />
-                        <div>
-                            <h4>Current Streak</h4>
-                            <p>{streak} Days</p>
-                        </div>
+                <div className="metric-grid">
+                    <div className="metric-tile">
+                        <Flame size={20} />
+                        <strong>{completedDays || 1} {text.days}</strong>
+                        <span>{text.streak}</span>
                     </div>
-                    <div className="stat-item">
-                        <TrendingUp className="calendar-icon" />
-                        <div>
-                            <h4>Consistency</h4>
-                            <p>{Math.round((logs.length / 28) * 100)}%</p>
-                        </div>
+                    <div className="metric-tile">
+                        <TrendingUp size={20} />
+                        <strong>{consistency}%</strong>
+                        <span>{text.consistency}</span>
+                    </div>
+                    <div className="metric-tile">
+                        <Award size={20} />
+                        <strong>{totalCompleted}</strong>
+                        <span>{text.totalLogged}</span>
                     </div>
                 </div>
+            </header>
 
-                <div className="heatmap-section card">
-                    <h3><CalendarIcon size={18} /> Completion Heatmap</h3>
+            <main className="patient-main">
+                <section className="detail-panel">
+                    <div className="panel-title-row">
+                        <h2><CalendarIcon size={18} /> {text.last28}</h2>
+                        <span>{completedDays} {text.activeDays}</span>
+                    </div>
+                    <img className="progress-illustration" src="/medical-progress.svg" alt="" />
                     <div className="heatmap-grid">
-                        {generateHeatmap().map((cell, idx) => (
-                            <div 
-                                key={idx} 
+                        {heatmap.map((cell) => (
+                            <span
+                                key={cell.date}
                                 className="heatmap-cell"
-                                style={{ 
-                                    backgroundColor: cell.intensity > 0.8 ? '#1A7A4A' : 
-                                                     cell.intensity > 0.4 ? '#34d399' : 
-                                                     cell.intensity > 0 ? '#a7f3d0' : '#eee' 
-                                }}
                                 title={cell.date}
+                                data-level={cell.intensity >= 0.8 ? '3' : cell.intensity >= 0.4 ? '2' : cell.intensity > 0 ? '1' : '0'}
                             />
                         ))}
                     </div>
                     <div className="heatmap-legend">
-                        <span>Less</span>
-                        <div className="legend-cells">
-                            <div className="heatmap-cell" style={{backgroundColor: '#eee'}}></div>
-                            <div className="heatmap-cell" style={{backgroundColor: '#a7f3d0'}}></div>
-                            <div className="heatmap-cell" style={{backgroundColor: '#1A7A4A'}}></div>
-                        </div>
-                        <span>More</span>
+                        <span>{text.less}</span>
+                        <i data-level="0" />
+                        <i data-level="1" />
+                        <i data-level="2" />
+                        <i data-level="3" />
+                        <span>{text.more}</span>
                     </div>
-                </div>
+                </section>
 
-                <div className="recent-activity">
-                    <h3>Recent Activity</h3>
-                    {logs.slice().reverse().map(log => (
-                        <div key={log.id} className="activity-item card">
-                            <div className="activity-info">
-                                <strong>{new Date(log.date).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}</strong>
-                                <p>{log.completedExerciseIds.length} exercises completed</p>
-                            </div>
-                            <CheckCircle color="#1A7A4A" />
-                        </div>
-                    ))}
-                </div>
+                <section className="recent-activity">
+                    <h2>{text.recentActivity}</h2>
+                    {logs.length === 0 ? (
+                        <div className="empty-state compact">{text.noActivity}</div>
+                    ) : (
+                        logs.slice().reverse().map((log) => (
+                            <article key={log.id || log.date} className="activity-item">
+                                <div>
+                                    <strong>{new Date(log.date).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}</strong>
+                                    <span>{log.completedExerciseIds.length} {text.exercisesCompleted}</span>
+                                </div>
+                                <CheckCircle2 size={22} />
+                            </article>
+                        ))
+                    )}
+                </section>
             </main>
 
             <nav className="patient-nav">
-                <div className="nav-item" onClick={() => navigate(`/patient/${token}`)}>
-                    <CheckCircle />
-                    <span>Today</span>
-                </div>
-                <div className="nav-item active" onClick={() => navigate(`/history/${token}`)}>
+                <button className="nav-item" onClick={() => navigate(`/patient/${token}`)}>
+                    <CheckCircle2 />
+                    <span>{text.today}</span>
+                </button>
+                <button className="nav-item active" onClick={() => navigate(`/history/${token}`)}>
                     <CalendarIcon />
-                    <span>History</span>
-                </div>
+                    <span>{text.progress}</span>
+                </button>
             </nav>
         </div>
     );

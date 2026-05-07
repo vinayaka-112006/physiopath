@@ -1,102 +1,1841 @@
 :root {
-  --primary: #1A7A4A;
-  --primary-dark: #125A36;
-  --secondary: #2C3E50;
-  --accent: #E3F2FD;
-  --error: #C0392B;
-  --warning: #e67e22;
-  --text: #2C3E50;
-  --bg: #F8F9FA;
-  --success-bg: #f0fdf4;
+  --primary: #1a7a4a;
+  --primary-dark: #105a36;
+  --primary-soft: #e8f5ee;
+  --ink: #22312f;
+  --muted: #66756f;
+  --line: #dce7e2;
+  --surface: #ffffff;
+  --bg: #f6faf8;
+  --blue: #2f6f9f;
+  --amber: #d9822b;
+  --red: #c0392b;
+  --shadow: 0 16px 40px rgba(27, 66, 49, 0.12);
 }
+
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
 }
 
-/* Layout & Containers */
-.app-container { min-height: 100vh; width: 100%; }
-.page-container { padding: 2rem; max-width: 1200px; margin: 0 auto; }
-.card { background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
 
-/* Login Page Styles */
-.login-page { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 1rem; }
-.login-card { background: white; padding: 2.5rem; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 400px; text-align: center; }
-.login-header h1 { margin: 0.5rem 0 0.25rem; color: var(--primary); font-size: 2rem; }
-.login-header p { color: #666; margin-bottom: 2rem; }
-.login-form { text-align: left; }
-.input-group { margin-bottom: 1.5rem; }
-.input-group label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #555; margin-bottom: 0.5rem; }
-.input-group input { width: 100%; padding: 0.8rem 1rem; border: 1.5px solid #eee; border-radius: 10px; font-size: 1rem; transition: border-color 0.2s; box-sizing: border-box; }
-.input-group input:focus { outline: none; border-color: var(--primary); }
-.login-btn { width: 100%; padding: 1rem; background-color: var(--primary); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-.login-btn:hover { background-color: var(--primary-dark); }
-.error-message { background-color: #fee2e2; color: #b91c1c; padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-size: 0.9rem; border: 1px solid #fecaca; }
+.app-container, .loading-screen, .error-screen { min-height: 100vh; }
+.loading-screen, .error-screen {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: var(--muted);
+  background: var(--bg);
+}
 
-/* Dashboard Styles */
-.dashboard-container { min-height: 100vh; background-color: var(--bg); }
-.dashboard-header { background: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-.header-left h1 { margin: 0; color: var(--primary); font-size: 1.5rem; }
-.dashboard-content { padding: 2rem; max-width: 1200px; margin: 0 auto; }
-.content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-.create-plan-btn { background-color: var(--primary); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
-.empty-state { background: white; padding: 5rem 2rem; border-radius: 20px; text-align: center; border: 2px dashed #eee; color: #888; }
+.eyebrow {
+  display: inline-flex;
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
 
-/* Builder Styles */
-.builder-header { background: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-.save-btn { background-color: var(--primary); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
-.form-row { display: grid; grid-template-columns: 1fr 200px; gap: 1.5rem; }
-.exercise-config { display: grid; grid-template-columns: 1fr 1fr 1fr 50px; gap: 1rem; align-items: flex-end; }
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
-.modal-content { background: white; width: 100%; max-width: 600px; border-radius: 20px; max-height: 80vh; display: flex; flex-direction: column; overflow: hidden; }
+.icon-btn, .icon-text-btn, .secondary-action, .primary-action, .create-plan-btn, .back-inline {
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 
-/* Patient Portal Styles */
-.patient-container { padding-bottom: 80px; max-width: 500px; margin: 0 auto; background-color: var(--bg); min-height: 100vh; }
-.patient-header { background: white; padding: 2rem 1.5rem 1rem; }
-.patient-intro h1 { margin: 0 0 0.5rem; font-size: 1.8rem; color: var(--secondary); }
-.offline-badge { display: inline-block; background-color: var(--success-bg); color: var(--primary); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
-.stat-card { background: white; padding: 1rem; border-radius: 15px; display: flex; align-items: center; gap: 0.8rem; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
-.stat-value { font-weight: 700; font-size: 1.1rem; color: var(--secondary); }
-.progress-bar-bg { height: 8px; background-color: #eee; border-radius: 10px; overflow: hidden; }
-.progress-bar-fill { height: 100%; background-color: var(--primary); }
-.patient-exercise-card { background: white; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-bottom: 1rem; }
-.exercise-main-row { padding: 1.2rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; }
-.check-btn { background: none; border: none; padding: 0; display: flex; }
-.check-btn .checked { color: var(--primary); }
-.check-btn .unchecked { color: #eee; }
-.exercise-details { padding: 0 1.5rem 1.5rem; border-top: 1px solid #f5f5f5; }
-.mistakes-box { background-color: #fffaf0; padding: 1rem; border-radius: 12px; margin-top: 1rem; }
-.patient-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; background: white; display: flex; justify-content: space-around; padding: 0.8rem 0 1.5rem; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px; }
-.nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; color: #ccc; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
-.nav-item.active { color: var(--primary); }
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
 
-/* Workout Engine Styles */
-.workout-engine { height: 100vh; width: 100vw; background-color: white; display: flex; flex-direction: column; overflow: hidden; position: fixed; top: 0; left: 0; z-index: 1000; }
-.workout-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; background: white; border-bottom: 1px solid #eee; }
-.workout-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem; position: relative; }
-.big-rep-button { width: 280px; height: 280px; background: white; border: 12px solid var(--primary); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; margin: 2rem auto; box-shadow: 0 15px 35px rgba(26, 122, 74, 0.15); transition: transform 0.1s; }
-.big-rep-button:active { transform: scale(0.95); }
-.rep-count { font-size: 6rem; font-weight: 900; color: var(--primary); line-height: 1; }
-.countdown-circle { width: 120px; height: 120px; border: 8px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: 800; margin: 2rem auto; color: var(--primary); }
-.timer-display { font-size: 5rem; font-weight: 900; color: var(--secondary); margin: 2rem 0; }
-.start-workout-btn { width: 100%; background-color: var(--primary); color: white; border: none; padding: 1.2rem; border-radius: 18px; font-size: 1.2rem; font-weight: 800; margin-top: 2rem; display: flex; align-items: center; justify-content: center; gap: 0.8rem; box-shadow: 0 10px 25px rgba(26, 122, 74, 0.2); cursor: pointer; }
+.icon-text-btn, .secondary-action {
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 8px;
+  color: var(--primary-dark);
+  background: var(--primary-soft);
+  font-weight: 800;
+}
 
-/* History & Heatmap */
-.heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin: 1.5rem 0; }
-.heatmap-cell { aspect-ratio: 1; border-radius: 4px; background-color: #eee; }
-.stats-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
-.stat-item { display: flex; align-items: center; gap: 1rem; }
-.activity-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 1rem 1.5rem; }
-.back-btn-patient { background: none; border: none; color: var(--secondary); margin-bottom: 1rem; cursor: pointer; }
+.primary-action, .create-plan-btn {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 20px;
+  border-radius: 8px;
+  color: white;
+  background: var(--primary);
+  font-weight: 900;
+  box-shadow: 0 14px 28px rgba(26, 122, 74, 0.22);
+}
 
-/* Success Modal */
-.success-modal { padding: 2.5rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
-.qr-container { padding: 1rem; background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-.share-link-box { display: flex; width: 100%; gap: 0.5rem; }
-.share-link-box input { flex: 1; padding: 0.8rem; border: 1.5px solid #eee; border-radius: 10px; background-color: #f9f9f9; }
+.secondary-action {
+  width: auto;
+  box-shadow: inset 0 0 0 1px rgba(26, 122, 74, 0.14);
+}
+
+/* Patient */
+.patient-shell {
+  width: min(100%, 520px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding-bottom: 88px;
+  background: var(--bg);
+}
+
+.patient-hero {
+  padding: 24px 18px 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #eef8f3 100%);
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-topline, .timeline-strip > div, .section-heading, .panel-title-row, .detail-header, .workout-topbar, .doctor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.patient-hero h1, .detail-main h1, .workout-view h1, .doctor-header h1 {
+  margin: 4px 0 0;
+  font-size: clamp(1.55rem, 5vw, 2.2rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.offline-pill, .set-chip, .user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 11px;
+  border-radius: 999px;
+  color: var(--primary-dark);
+  background: var(--primary-soft);
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.language-row, .detail-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.language-row {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.language-select {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  border-radius: 8px;
+  color: var(--primary-dark);
+  background: white;
+  border: 1px solid var(--line);
+}
+
+.language-select select {
+  border: 0;
+  outline: 0;
+  color: var(--ink);
+  background: transparent;
+  font-weight: 800;
+}
+
+.recovery-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 22px;
+  padding: 18px;
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.card-label, .metric-tile span, .exercise-copy span, .activity-item span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.recovery-card strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.45rem;
+}
+
+.radial-meter, .rep-ring {
+  background: conic-gradient(var(--primary) var(--value), #e8efeb 0);
+}
+
+.radial-meter {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.radial-meter span {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: white;
+  font-weight: 900;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.progress-hero .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.metric-tile {
+  min-height: 98px;
+  padding: 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line);
+}
+
+.metric-tile svg { color: var(--primary); }
+.metric-tile strong { display: block; margin: 10px 0 2px; }
+
+.timeline-strip {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #f8fbfa;
+  border: 1px solid var(--line);
+}
+
+.timeline-strip span { color: var(--muted); font-weight: 700; }
+.progress-track, .mini-progress {
+  height: 8px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dbe8e2;
+}
+.progress-fill, .mini-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+}
+
+.patient-main, .detail-main {
+  padding: 18px;
+}
+
+.section-heading h2, .detail-panel h2, .recent-activity h2, .doctor-panel h2 {
+  margin: 2px 0 0;
+  font-size: 1.1rem;
+}
+
+.exercise-stack {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.exercise-card {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.exercise-card.is-complete { background: #f0fbf5; }
+
+.round-check {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  color: var(--primary);
+  background: transparent;
+}
+
+.round-check svg { width: 30px; height: 30px; }
+
+.exercise-card-body {
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  display: grid;
+  grid-template-columns: 54px 1fr 22px;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  text-align: left;
+  color: inherit;
+}
+
+.exercise-visual {
+  width: 54px;
+  height: 54px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.exercise-copy h3 {
+  margin: 2px 0;
+  font-size: 1rem;
+}
+.exercise-copy p { margin: 0; color: var(--muted); }
+
+.coach-note, .warning-note, .form-alert {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 13px;
+  border-radius: 8px;
+  color: var(--muted);
+  background: #fffaf0;
+  border: 1px solid #f1ddbb;
+}
+.coach-note p, .warning-note, .form-alert p { margin: 0; line-height: 1.45; }
+.warning-note { font-size: 0.86rem; }
+
+.patient-main .primary-action { margin-top: 16px; }
+
+.patient-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: 20;
+  width: min(100%, 520px);
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 10px 18px 16px;
+  background: rgba(255, 255, 255, 0.94);
+  border-top: 1px solid var(--line);
+  backdrop-filter: blur(16px);
+}
+
+.nav-item {
+  height: 52px;
+  border: 0;
+  border-radius: 8px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+.nav-item.active { color: var(--primary); background: var(--primary-soft); }
+.nav-item svg { width: 20px; height: 20px; }
+
+/* Exercise details */
+.detail-shell, .workout-shell {
+  width: min(100%, 520px);
+  min-height: 100vh;
+  margin: 0 auto;
+  background: var(--bg);
+}
+
+.detail-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 12px 16px;
+  background: rgba(246, 250, 248, 0.94);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(16px);
+  font-weight: 900;
+}
+
+.exercise-detail-hero { text-align: left; }
+.exercise-detail-hero p { color: var(--muted); line-height: 1.55; }
+
+.pose-card {
+  height: 210px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #e9f5ef, #fdfaf3);
+  border: 1px solid var(--line);
+}
+
+.bridge-figure {
+  position: absolute;
+  inset: 0;
+}
+.bridge-figure span { position: absolute; display: block; background: var(--primary); }
+.bridge-figure .head { width: 34px; height: 34px; border-radius: 50%; left: 84px; bottom: 56px; }
+.bridge-figure .torso { width: 114px; height: 16px; left: 118px; bottom: 78px; transform: rotate(-16deg); border-radius: 999px; }
+.bridge-figure .hips { width: 54px; height: 24px; left: 218px; bottom: 104px; border-radius: 999px; background: var(--blue); }
+.bridge-figure .leg { height: 14px; border-radius: 999px; background: #22312f; }
+.bridge-figure .leg.left { width: 98px; left: 260px; bottom: 96px; transform: rotate(30deg); }
+.bridge-figure .leg.right { width: 112px; left: 262px; bottom: 58px; transform: rotate(-8deg); }
+
+.prescription-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 18px 0;
+}
+.prescription-row div, .detail-panel {
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.prescription-row div { padding: 14px; }
+.prescription-row strong { display: block; font-size: 1.4rem; }
+.prescription-row span { color: var(--muted); font-weight: 700; }
+
+.detail-panel {
+  padding: 16px;
+  margin-top: 14px;
+}
+.steps-list { display: grid; gap: 10px; margin-top: 12px; }
+.step-item { display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: start; }
+.step-item span {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: var(--primary);
+  font-weight: 900;
+}
+.step-item p { margin: 5px 0 0; color: var(--muted); line-height: 1.45; }
+.rich-step strong { display: block; margin-top: 3px; }
+.caution-panel h2 { display: flex; align-items: center; gap: 8px; color: var(--amber); }
+.caution-panel ul { padding: 0; margin: 12px 0 0; list-style: none; display: grid; gap: 9px; }
+.caution-panel li { display: flex; gap: 8px; color: var(--muted); }
+.voice-panel h2 { display: flex; align-items: center; gap: 8px; color: var(--primary); }
+.voice-panel > p { margin: 10px 0 0; color: var(--muted); line-height: 1.55; }
+.voice-lines { display: grid; gap: 10px; margin-top: 12px; }
+.voice-lines blockquote {
+  margin: 0;
+  padding: 12px;
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+  color: var(--muted);
+  background: #f8fbfa;
+  line-height: 1.5;
+}
+.voice-lines strong { display: block; color: var(--ink); margin-bottom: 4px; }
+.voice-action-btn {
+  min-height: 48px;
+  width: 100%;
+  margin-top: 16px;
+  border: 0;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #071012;
+  background: var(--primary);
+  font-weight: 900;
+  box-shadow: 0 14px 28px rgba(185, 255, 29, 0.18);
+}
+.image-generation-status {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #071012;
+  background: #efffc2;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+.image-generation-status.error {
+  color: #7c231a;
+  background: #fff1ed;
+}
+.generated-step-image,
+.generated-step-fallback {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  margin-bottom: 12px;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #e4e9dd;
+  background: #ffffff;
+}
+.generated-step-image {
+  display: block;
+  object-fit: cover;
+}
+.generated-step-fallback img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  opacity: 0.76;
+}
+
+/* Workout */
+.workout-shell {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  background: #f7fbf9;
+}
+.workout-topbar {
+  padding: 14px 18px;
+  background: white;
+  border-bottom: 1px solid var(--line);
+}
+.workout-title { flex: 1; text-align: center; font-weight: 900; }
+.mini-progress { width: min(100%, 220px); margin: 7px auto 0; height: 6px; }
+.workout-stage { flex: 1; display: grid; place-items: center; padding: 22px; }
+.workout-view {
+  width: min(100%, 520px);
+  text-align: center;
+}
+.workout-view p { color: var(--muted); line-height: 1.55; }
+.countdown-ring, .rep-ring {
+  width: min(72vw, 288px);
+  height: min(72vw, 288px);
+  margin: 28px auto;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--primary-dark);
+}
+.countdown-ring { background: var(--primary-soft); border: 12px solid white; box-shadow: var(--shadow); }
+.countdown-ring strong { font-size: 5rem; line-height: 0.85; }
+.countdown-ring span, .rep-ring span, .rep-ring em { display: block; color: var(--muted); font-style: normal; font-weight: 800; }
+.rep-ring {
+  border: 0;
+  grid-template-rows: 1fr auto auto 1fr;
+  background: conic-gradient(var(--primary) var(--rep-ring), #dce7e2 0);
+  box-shadow: var(--shadow);
+}
+.rep-ring::before {
+  content: "";
+  grid-row: 1 / -1;
+  grid-column: 1;
+  width: calc(100% - 28px);
+  height: calc(100% - 28px);
+  border-radius: 50%;
+  background: white;
+}
+.rep-ring > * { grid-column: 1; position: relative; }
+.rep-ring strong { grid-row: 2; font-size: 5.8rem; line-height: 0.9; color: var(--primary); }
+.rep-ring span { grid-row: 3; }
+.rep-ring em { grid-row: 4; font-size: 0.8rem; align-self: start; margin-top: 8px; }
+.form-alert { max-width: 420px; margin-inline: auto; text-align: left; background: #fff6ec; }
+.workout-controls { display: flex; justify-content: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.rest-workout h1 { font-size: clamp(5rem, 24vw, 9rem); color: var(--primary); }
+.complete-mark {
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: var(--primary);
+}
+.complete-workout .primary-action { max-width: 320px; margin: 22px auto 0; }
+
+/* Progress */
+.back-inline {
+  width: auto;
+  min-height: 38px;
+  padding: 0 12px 0 8px;
+  border-radius: 8px;
+  color: var(--ink);
+  background: white;
+  font-weight: 800;
+}
+.heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 16px; }
+.heatmap-cell, .heatmap-legend i {
+  aspect-ratio: 1;
+  border-radius: 5px;
+  background: #e8efeb;
+}
+.heatmap-cell[data-level="1"], .heatmap-legend i[data-level="1"] { background: #bfe8d0; }
+.heatmap-cell[data-level="2"], .heatmap-legend i[data-level="2"] { background: #68bd8d; }
+.heatmap-cell[data-level="3"], .heatmap-legend i[data-level="3"] { background: var(--primary); }
+.heatmap-legend { display: flex; align-items: center; gap: 6px; justify-content: flex-end; margin-top: 12px; color: var(--muted); font-size: 0.78rem; }
+.heatmap-legend i { width: 13px; height: 13px; }
+.recent-activity { margin-top: 18px; }
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  margin-top: 10px;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid var(--line);
+}
+.activity-item svg { color: var(--primary); }
+.empty-state {
+  padding: 56px 24px;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  background: white;
+}
+.empty-state.compact { padding: 20px; }
+
+/* Doctor */
+.doctor-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+}
+.doctor-sidebar {
+  padding: 24px;
+  background: #163c2a;
+  color: white;
+}
+.brand-lockup { display: flex; align-items: center; gap: 12px; margin-bottom: 34px; }
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: #163c2a;
+  background: white;
+  font-weight: 900;
+}
+.brand-lockup span:not(.brand-mark) { display: block; color: #bfe8d0; font-size: 0.82rem; }
+.doctor-sidebar nav { display: grid; gap: 8px; }
+.doctor-sidebar button {
+  border: 0;
+  min-height: 44px;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #d9eee2;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+}
+.doctor-sidebar button.active, .doctor-sidebar button:hover { background: rgba(255, 255, 255, 0.12); color: white; }
+.doctor-main { padding: 28px; }
+.doctor-actions { display: flex; align-items: center; gap: 10px; }
+.doctor-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 24px 0;
+}
+.doctor-metrics article, .doctor-panel {
+  border-radius: 8px;
+  background: white;
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 22px rgba(27, 66, 49, 0.06);
+}
+.doctor-metrics article { padding: 18px; }
+.doctor-metrics svg { color: var(--primary); }
+.doctor-metrics strong { display: block; margin-top: 12px; font-size: 2rem; }
+.doctor-metrics span { color: var(--muted); font-weight: 700; }
+.doctor-panel { padding: 18px; margin-top: 16px; }
+.doctor-panel .create-plan-btn { width: auto; min-height: 44px; }
+.patient-table { display: grid; gap: 8px; margin-top: 16px; }
+.patient-table article {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 120px 88px;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #f8fbfa;
+}
+.patient-table span { display: block; color: var(--muted); margin-top: 3px; }
+.patient-table em {
+  justify-self: start;
+  padding: 5px 9px;
+  border-radius: 999px;
+  color: var(--primary-dark);
+  background: var(--primary-soft);
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 800;
+}
+.adherence-bar { height: 8px; border-radius: 999px; background: #dce7e2; overflow: hidden; }
+.adherence-bar span { height: 100%; background: var(--primary); margin: 0; }
+.table-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.table-actions button {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  color: var(--primary-dark);
+  background: var(--primary-soft);
+  display: grid;
+  place-items: center;
+}
+.guide-panel {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 16px;
+}
+.guide-panel p { margin: 6px 0 0; color: var(--muted); }
+
+/* Existing builder and login */
+.login-page { min-height: 100vh; display: grid; place-items: center; padding: 18px; background: linear-gradient(135deg, #e8f5ee, #f8fbfa); }
+.login-card { width: min(100%, 420px); padding: 28px; border-radius: 8px; background: white; box-shadow: var(--shadow); }
+.login-header { text-align: center; margin-bottom: 22px; }
+.login-header h1 { color: var(--primary); margin: 8px 0 4px; }
+.login-header p, .error-message { color: var(--muted); }
+.login-footer { margin-top: 18px; text-align: center; color: var(--muted); font-size: 0.92rem; }
+.login-footer a { color: var(--primary); font-weight: 900; text-decoration: none; }
+.input-group { margin-bottom: 14px; }
+.input-group label { display: flex; align-items: center; gap: 8px; color: var(--muted); margin-bottom: 7px; font-weight: 800; }
+.input-group input, .form-group input, .form-group select, .config-field input, .search-bar input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 12px;
+  background: white;
+}
+.login-btn, .save-btn, .add-btn, .done-btn, .close-modal-btn, .share-link-box button, .secondary-btn {
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: white;
+  background: var(--primary);
+  font-weight: 900;
+}
+.login-btn { width: 100%; }
+.error-message { padding: 10px; border-radius: 8px; background: #fff1f0; color: var(--red); }
+.builder-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 24px;
+  background: white;
+  border-bottom: 1px solid var(--line);
+}
+.builder-header h1 { font-size: 1.3rem; }
+.back-btn, .remove-btn {
+  border: 0;
+  min-height: 40px;
+  border-radius: 8px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  font-weight: 900;
+}
+.builder-content { max-width: 980px; margin: 0 auto; padding: 24px; }
+.card, .exercise-item { border-radius: 8px; background: white; border: 1px solid var(--line); box-shadow: 0 8px 22px rgba(27, 66, 49, 0.06); }
+.patient-details { padding: 18px; }
+.patient-details h3, .section-header h3 { display: flex; align-items: center; gap: 8px; margin-top: 0; }
+.form-row { display: grid; grid-template-columns: 1fr 180px; gap: 14px; }
+.form-group label, .config-field label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 0.82rem; font-weight: 800; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin: 22px 0 12px; }
+.exercise-list { display: grid; gap: 12px; }
+.exercise-item { padding: 16px; }
+.exercise-info { display: flex; justify-content: space-between; gap: 12px; }
+.exercise-info h4 { margin: 0; }
+.tag { color: var(--primary); background: var(--primary-soft); padding: 5px 9px; border-radius: 999px; font-size: 0.78rem; font-weight: 900; }
+.exercise-config { display: grid; grid-template-columns: repeat(3, 1fr) 46px; gap: 10px; align-items: end; margin-top: 14px; }
+.remove-btn { width: 46px; padding: 0; color: var(--red); background: #fff1f0; }
+.mistakes-preview { display: flex; align-items: center; gap: 8px; margin-top: 12px; color: var(--amber); font-size: 0.86rem; }
+.empty-list-prompt { padding: 28px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 8px; }
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(21, 38, 32, 0.45);
+}
+.modal-content {
+  width: min(100%, 640px);
+  max-height: 86vh;
+  overflow: auto;
+  border-radius: 8px;
+  background: white;
+  box-shadow: var(--shadow);
+}
+.modal-header { padding: 18px; border-bottom: 1px solid var(--line); }
+.search-bar { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.library-grid { display: grid; gap: 8px; padding: 18px; }
+.library-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  border-radius: 8px;
+  background: #f8fbfa;
+  border: 1px solid var(--line);
+  cursor: pointer;
+}
+.library-item h4, .library-item p { margin: 0; }
+.library-item p { color: var(--muted); margin-top: 4px; }
+.close-modal-btn { margin: 0 18px 18px; background: var(--ink); }
+.success-modal { padding: 24px; text-align: center; display: grid; gap: 16px; justify-items: center; }
+.qr-container { padding: 14px; border-radius: 8px; border: 1px solid var(--line); }
+.share-link-box { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.share-link-box input { min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 0 10px; }
+
+@media (max-width: 820px) {
+  .doctor-shell { display: block; }
+  .doctor-sidebar { position: static; padding: 16px; }
+  .doctor-sidebar nav { grid-template-columns: repeat(3, 1fr); }
+  .doctor-main { padding: 18px; }
+  .doctor-header, .panel-title-row, .guide-panel { align-items: flex-start; flex-direction: column; }
+  .doctor-metrics, .progress-hero .metric-grid { grid-template-columns: 1fr; }
+  .patient-table article { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .patient-hero h1 { font-size: 1.55rem; }
+  .hero-topline { align-items: flex-start; }
+  .offline-pill { padding-inline: 9px; }
+  .progress-hero .metric-grid, .form-row, .exercise-config { grid-template-columns: 1fr; }
+  .builder-header { padding: 12px; }
+  .builder-header h1 { font-size: 1rem; }
+  .builder-content { padding: 16px; }
+}
+
+/* Dark medical neon theme inspired by the provided reference */
+:root {
+  --primary: #b9ff1d;
+  --primary-dark: #071012;
+  --primary-soft: #ecffd0;
+  --ink: #f7fbf9;
+  --muted: #9eaaad;
+  --line: #263236;
+  --bg: #eff9d4;
+  --panel: #071012;
+  --panel-2: #121a1d;
+  --shadow: 0 20px 46px rgba(7, 16, 18, 0.24);
+}
+
+body,
+.patient-shell,
+.detail-shell {
+  background: var(--bg);
+}
+
+.patient-hero,
+.doctor-sidebar,
+.workout-shell {
+  color: var(--ink);
+  background:
+    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px),
+    var(--panel);
+  background-size: 42px 42px;
+}
+
+.patient-hero {
+  border-bottom: 5px solid var(--primary);
+}
+
+.detail-header,
+.workout-topbar,
+.builder-header,
+.patient-nav {
+  color: var(--ink);
+  background: rgba(7, 16, 18, 0.95);
+  border-color: var(--line);
+}
+
+.recovery-card,
+.exercise-card,
+.detail-panel,
+.prescription-row div,
+.activity-item,
+.doctor-metrics article,
+.doctor-panel,
+.card,
+.exercise-item,
+.login-card,
+.modal-content {
+  color: var(--ink);
+  background: linear-gradient(145deg, #121a1d 0%, #071012 100%);
+  border-color: var(--line);
+  box-shadow: var(--shadow);
+}
+
+.metric-tile,
+.timeline-strip,
+.patient-table article,
+.library-item {
+  color: var(--ink);
+  background: #10181b;
+  border-color: var(--line);
+}
+
+.primary-action,
+.create-plan-btn,
+.login-btn,
+.save-btn,
+.add-btn,
+.done-btn,
+.share-link-box button,
+.offline-pill,
+.set-chip,
+.user-chip,
+.brand-mark,
+.tag,
+.nav-item.active,
+.doctor-sidebar button.active,
+.doctor-sidebar button:hover,
+.table-actions button,
+.back-btn,
+.language-select .language-select {
+  color: #071012;
+  background: var(--primary);
+}
+
+.secondary-action,
+.icon-text-btn,
+.language-select {
+  color: var(--primary);
+  background: #111a1d;
+  border-color: var(--line);
+}
+
+.icon-btn {
+  color: var(--ink);
+  background: #111a1d;
+}
+
+.eyebrow,
+.metric-tile svg,
+.activity-item svg,
+.voice-panel h2,
+.voice-lines strong {
+  color: var(--primary);
+}
+
+.card-label,
+.metric-tile span,
+.exercise-copy span,
+.activity-item span,
+.timeline-strip span,
+.patient-table span,
+.guide-panel p,
+.step-item p,
+.voice-panel > p,
+.voice-lines blockquote,
+.caution-panel li,
+.workout-view p {
+  color: #b8c4c7;
+}
+
+.patient-main,
+.detail-main,
+.doctor-main,
+.builder-content {
+  color: #071012;
+}
+
+.hero-illustration {
+  width: 96px;
+  height: 78px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(185, 255, 29, 0.34);
+}
+
+.image-pose-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.82;
+}
+
+.panel-illustration,
+.progress-illustration {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+
+.panel-illustration {
+  max-width: 132px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.progress-illustration {
+  margin-top: 14px;
+  max-height: 160px;
+  object-fit: cover;
+}
+
+.guide-panel {
+  grid-template-columns: 150px 1fr auto;
+}
+
+.radial-meter span {
+  color: var(--primary);
+  background: var(--panel);
+}
+
+.progress-track,
+.mini-progress,
+.adherence-bar {
+  background: #263236;
+}
+
+.patient-table em {
+  color: #071012;
+  background: var(--primary);
+}
+
+.login-page {
+  background: var(--bg);
+}
+
+.input-group input,
+.form-group input,
+.form-group select,
+.config-field input,
+.search-bar input,
+.share-link-box input {
+  color: var(--ink);
+  background: #10181b;
+  border-color: var(--line);
+}
+
+.coach-note,
+.warning-note,
+.form-alert {
+  color: #263236;
+  background: #f5ffd6;
+  border-color: #daf59e;
+}
+
+.pose-card {
+  background: var(--panel);
+  border-color: var(--line);
+}
+
+@media (max-width: 820px) {
+  .guide-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-illustration {
+    max-width: 100%;
+    max-height: 180px;
+  }
+}
+
+/* Glassmorphism and animated website-style polish */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes softFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.doctor-main,
+.patient-main,
+.detail-main,
+.builder-content {
+  animation: fadeUp .55s ease both;
+}
+
+.doctor-hero-banner {
+  position: relative;
+  min-height: 310px;
+  margin: 22px 0 24px;
+  padding: 44px;
+  border-radius: 18px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  align-items: end;
+  gap: 28px;
+  color: white;
+  background:
+    linear-gradient(90deg, rgba(3, 13, 27, .92) 0%, rgba(3, 13, 27, .72) 45%, rgba(3, 13, 27, .26) 100%),
+    url('/medical-tech-hero.svg') center / cover no-repeat;
+  box-shadow: 0 28px 60px rgba(3, 13, 27, .26);
+}
+
+.doctor-hero-banner h2 {
+  max-width: 620px;
+  margin: 10px 0 12px;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.doctor-hero-banner p {
+  max-width: 560px;
+  margin: 0 0 24px;
+  color: #dce8ef;
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.hero-cta {
+  min-height: 52px;
+  border: 0;
+  border-radius: 10px;
+  padding: 0 22px;
+  color: #061426;
+  background: white;
+  font-weight: 900;
+  box-shadow: 0 16px 34px rgba(255, 255, 255, .18);
+}
+
+.hero-glass-stat {
+  min-height: 150px;
+  padding: 24px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, .34);
+  background: rgba(255, 255, 255, .18);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, .22);
+  backdrop-filter: blur(18px);
+  animation: softFloat 4.5s ease-in-out infinite;
+}
+
+.hero-glass-stat strong {
+  display: block;
+  color: white;
+  font-size: 2.6rem;
+  line-height: 1;
+}
+
+.hero-glass-stat span {
+  display: block;
+  margin-top: 8px;
+  color: #eef7fb;
+  font-weight: 800;
+}
+
+.recovery-card,
+.doctor-metrics article,
+.doctor-panel,
+.detail-panel,
+.exercise-card {
+  border: 1px solid rgba(255, 255, 255, .16);
+  backdrop-filter: blur(16px);
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+
+.doctor-metrics article:hover,
+.doctor-panel:hover,
+.exercise-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(185, 255, 29, .48);
+  box-shadow: 0 28px 58px rgba(7, 16, 18, .22);
+}
+
+.hero-illustration {
+  width: 118px;
+  height: 92px;
+  animation: softFloat 5s ease-in-out infinite;
+}
+
+.hero-mini-copy {
+  max-width: 240px;
+  margin: 8px 0 0;
+  color: #dce8ef;
+  line-height: 1.4;
+  font-size: .9rem;
+}
+
+.patient-hero {
+  border-radius: 0 0 22px 22px;
+}
+
+.patient-shell,
+.detail-shell {
+  width: min(100%, 560px);
+}
+
+.patient-nav {
+  width: min(100%, 560px);
+  border-radius: 18px 18px 0 0;
+}
+
+.panel-illustration,
+.progress-illustration,
+.pose-card,
+.generated-step-image,
+.generated-step-fallback {
+  box-shadow: 0 18px 44px rgba(7, 16, 18, .16);
+}
+
+.input-group input:focus,
+.form-group input:focus,
+.form-group select:focus,
+.config-field input:focus,
+.search-bar input:focus {
+  outline: 2px solid rgba(185, 255, 29, .44);
+  border-color: rgba(185, 255, 29, .7);
+}
+
+@media (max-width: 820px) {
+  .doctor-hero-banner {
+    grid-template-columns: 1fr;
+    padding: 28px;
+  }
+
+  .hero-glass-stat {
+    max-width: 260px;
+  }
+}
+
+/* Blue corporate medical-tech theme inspired by the latest reference */
+:root {
+  --primary: #2563ff;
+  --primary-dark: #071126;
+  --primary-soft: #eaf1ff;
+  --ink: #f8fbff;
+  --muted: #65748b;
+  --line: #dbe5f4;
+  --bg: #ffffff;
+  --panel: #070b1d;
+  --panel-2: #0e1731;
+  --shadow: 0 22px 48px rgba(7, 17, 38, 0.18);
+}
+
+body,
+.patient-shell,
+.detail-shell,
+.doctor-main,
+.builder-content,
+.patient-main,
+.detail-main {
+  background: #ffffff;
+}
+
+.patient-hero,
+.doctor-sidebar,
+.workout-shell,
+.builder-header,
+.detail-header,
+.workout-topbar,
+.patient-nav {
+  background:
+    linear-gradient(rgba(37, 99, 255, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 255, .08) 1px, transparent 1px),
+    var(--panel);
+  background-size: 52px 52px;
+  color: var(--ink);
+}
+
+.patient-hero {
+  border-bottom: 0;
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.patient-hero::after,
+.doctor-hero-banner::after {
+  content: "";
+  position: absolute;
+  right: -90px;
+  bottom: -120px;
+  width: 310px;
+  height: 310px;
+  border-radius: 50%;
+  background: rgba(37, 99, 255, .78);
+  z-index: 0;
+}
+
+.patient-hero > *,
+.doctor-hero-banner > * {
+  position: relative;
+  z-index: 1;
+}
+
+.doctor-hero-banner {
+  border-radius: 0;
+  min-height: 360px;
+  background:
+    linear-gradient(90deg, rgba(7, 11, 29, .94) 0%, rgba(7, 11, 29, .82) 52%, rgba(37, 99, 255, .24) 100%),
+    url('/medical-tech-hero.svg') center / cover no-repeat;
+  box-shadow: none;
+}
+
+.doctor-hero-banner h2 {
+  max-width: 650px;
+  font-weight: 900;
+}
+
+.hero-cta,
+.primary-action,
+.create-plan-btn,
+.login-btn,
+.save-btn,
+.add-btn,
+.done-btn,
+.share-link-box button {
+  color: #ffffff;
+  background: var(--primary);
+  box-shadow: 0 14px 30px rgba(37, 99, 255, .28);
+}
+
+.hero-glass-stat {
+  color: var(--primary-dark);
+  background: rgba(255, 255, 255, .94);
+  border-color: rgba(255, 255, 255, .7);
+  box-shadow: 0 22px 50px rgba(7, 17, 38, .24);
+}
+
+.hero-glass-stat strong,
+.hero-glass-stat span {
+  color: var(--primary-dark);
+}
+
+.brand-mark,
+.offline-pill,
+.set-chip,
+.user-chip,
+.tag,
+.nav-item.active,
+.doctor-sidebar button.active,
+.doctor-sidebar button:hover,
+.table-actions button,
+.back-btn {
+  color: #ffffff;
+  background: var(--primary);
+}
+
+.doctor-metrics article,
+.doctor-panel,
+.card,
+.exercise-item,
+.detail-panel,
+.prescription-row div,
+.activity-item,
+.exercise-card,
+.recovery-card,
+.login-card,
+.modal-content {
+  color: #101827;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  box-shadow: 0 16px 38px rgba(7, 17, 38, .09);
+}
+
+.recovery-card {
+  display: grid;
+  grid-template-columns: 1fr 124px 78px;
+  align-items: center;
+}
+
+.metric-tile,
+.timeline-strip,
+.patient-table article,
+.library-item {
+  color: #101827;
+  background: #f7faff;
+  border: 1px solid var(--line);
+}
+
+.doctor-metrics {
+  margin-top: -10px;
+}
+
+.doctor-panel.guide-panel,
+.doctor-metrics article {
+  border-radius: 0;
+}
+
+.patient-table article,
+.exercise-card,
+.detail-panel,
+.prescription-row div {
+  border-radius: 12px;
+}
+
+.doctor-sidebar {
+  background: var(--panel);
+}
+
+.doctor-sidebar button {
+  color: #d9e5ff;
+}
+
+.eyebrow,
+.metric-tile svg,
+.doctor-metrics svg,
+.activity-item svg,
+.voice-panel h2,
+.voice-lines strong {
+  color: var(--primary);
+}
+
+.card-label,
+.metric-tile span,
+.exercise-copy span,
+.activity-item span,
+.patient-table span,
+.guide-panel p,
+.step-item p,
+.voice-panel > p,
+.voice-lines blockquote,
+.caution-panel li {
+  color: #65748b;
+}
+
+.timeline-strip span,
+.hero-mini-copy {
+  color: #dce7ff;
+}
+
+.progress-track,
+.mini-progress,
+.adherence-bar {
+  background: #dce7ff;
+}
+
+.progress-fill,
+.mini-progress span,
+.adherence-bar span {
+  background: var(--primary);
+}
+
+.panel-illustration,
+.progress-illustration,
+.hero-illustration,
+.pose-card,
+.generated-step-image,
+.generated-step-fallback {
+  border-radius: 0 42px 0 42px;
+}
+
+.panel-illustration {
+  max-width: 160px;
+}
+
+.guide-panel {
+  border-top: 6px solid var(--primary);
+}
+
+.coach-note,
+.warning-note,
+.form-alert,
+.image-generation-status {
+  color: #12315f;
+  background: #eef5ff;
+  border-color: #cfe0ff;
+}
+
+.language-select,
+.secondary-action,
+.icon-text-btn {
+  color: var(--primary);
+  background: #eef5ff;
+  border-color: #cfe0ff;
+}
+
+.language-select select {
+  color: #101827;
+}
+
+.icon-btn {
+  color: #ffffff;
+  background: rgba(255, 255, 255, .12);
+}
+
+.voice-action-btn {
+  color: #ffffff;
+  background: var(--primary);
+  box-shadow: 0 14px 30px rgba(37, 99, 255, .28);
+}
+
+.login-page {
+  background:
+    radial-gradient(circle at 10% 10%, rgba(37, 99, 255, .18), transparent 26%),
+    radial-gradient(circle at 90% 80%, rgba(37, 99, 255, .14), transparent 28%),
+    #ffffff;
+}
+
+.input-group input,
+.form-group input,
+.form-group select,
+.config-field input,
+.search-bar input,
+.share-link-box input {
+  color: #101827;
+  background: #ffffff;
+  border-color: var(--line);
+}
+
+.empty-state,
+.empty-list-prompt {
+  background: #f7faff;
+  border-color: #cfe0ff;
+  color: #65748b;
+}
+
+.patient-nav {
+  width: min(100%, 560px);
+  background: #070b1d;
+  border-top: 4px solid var(--primary);
+}
+
+.nav-item {
+  color: #c7d6f3;
+}
+
+@media (max-width: 560px) {
+  .recovery-card {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-illustration {
+    width: 100%;
+    height: 140px;
+  }
+}
+
+/* NovaLyne-inspired bright glass theme */
+:root {
+  --primary: #0a73ff;
+  --primary-dark: #07152b;
+  --primary-soft: #eaf4ff;
+  --ink: #07152b;
+  --muted: #53677d;
+  --line: #dbe7f5;
+  --bg: #f7fbff;
+  --panel: #07152b;
+  --panel-2: #10203c;
+  --shadow: 0 22px 54px rgba(7, 21, 43, .16);
+}
+
+body {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(10,115,255,.12), transparent 28%),
+    radial-gradient(circle at 90% 44%, rgba(10,115,255,.1), transparent 26%),
+    #f7fbff;
+  color: var(--ink);
+}
+
+.doctor-sidebar,
+.builder-header,
+.detail-header,
+.workout-topbar,
+.patient-nav {
+  background: rgba(7, 21, 43, .88);
+  border-color: rgba(255,255,255,.12);
+  backdrop-filter: blur(18px);
+}
+
+.doctor-sidebar {
+  box-shadow: inset -1px 0 0 rgba(255,255,255,.08);
+}
+
+.brand-lockup strong {
+  font-size: 1.25rem;
+}
+
+.doctor-sidebar button {
+  color: #e8f2ff;
+}
+
+.doctor-sidebar button.active,
+.doctor-sidebar button:hover {
+  color: #fff;
+  background: linear-gradient(135deg, #0a73ff, #0359d8);
+  box-shadow: 0 12px 28px rgba(10,115,255,.3);
+}
+
+.doctor-hero-banner {
+  min-height: 390px;
+  margin-top: 18px;
+  border-radius: 0 0 28px 28px;
+  align-items: center;
+  background:
+    linear-gradient(90deg, rgba(7,21,43,.94), rgba(7,21,43,.78) 46%, rgba(7,21,43,.18)),
+    url('/physio-device-hero.svg') center / cover no-repeat;
+  box-shadow: 0 28px 70px rgba(7,21,43,.2);
+}
+
+.doctor-hero-banner::after {
+  background: radial-gradient(circle, rgba(10,115,255,.55), transparent 62%);
+}
+
+.doctor-hero-banner h2 {
+  font-size: clamp(2.35rem, 4.8vw, 4.4rem);
+  letter-spacing: 0;
+}
+
+.hero-cta,
+.primary-action,
+.create-plan-btn,
+.login-btn,
+.save-btn,
+.add-btn,
+.done-btn,
+.share-link-box button,
+.voice-action-btn {
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(135deg, #1984ff, #005df5);
+  box-shadow: 0 16px 34px rgba(10,115,255,.3);
+}
+
+.hero-glass-stat,
+.recovery-card,
+.doctor-metrics article,
+.doctor-panel,
+.detail-panel,
+.prescription-row div,
+.activity-item,
+.exercise-card,
+.card,
+.exercise-item,
+.login-card,
+.modal-content {
+  color: var(--ink);
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(255,255,255,.78);
+  box-shadow: 0 22px 55px rgba(7,21,43,.13);
+  backdrop-filter: blur(18px);
+}
+
+.doctor-metrics article,
+.doctor-panel {
+  border-radius: 14px;
+}
+
+.doctor-metrics article:hover,
+.doctor-panel:hover,
+.exercise-card:hover,
+.detail-panel:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 70px rgba(10,115,255,.16);
+  border-color: rgba(10,115,255,.28);
+}
+
+.doctor-metrics {
+  background: #fff;
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 14px 40px rgba(7,21,43,.08);
+}
+
+.doctor-panel.guide-panel {
+  border-top: 0;
+}
+
+.metric-tile,
+.timeline-strip,
+.patient-table article,
+.library-item,
+.empty-state,
+.empty-list-prompt {
+  color: var(--ink);
+  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(219,231,245,.9);
+  box-shadow: 0 12px 32px rgba(7,21,43,.08);
+  backdrop-filter: blur(14px);
+}
+
+.patient-hero {
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+  background:
+    linear-gradient(90deg, rgba(7,21,43,.94), rgba(7,21,43,.72) 48%, rgba(7,21,43,.12)),
+    url('/physio-device-hero.svg') center / cover no-repeat;
+  border-radius: 0 0 28px 28px;
+}
+
+.patient-hero::after {
+  background: radial-gradient(circle, rgba(10,115,255,.52), transparent 64%);
+}
+
+.recovery-card {
+  background: rgba(255,255,255,.18);
+  border-color: rgba(255,255,255,.32);
+  color: #fff;
+}
+
+.recovery-card .card-label,
+.recovery-card .hero-mini-copy,
+.timeline-strip span,
+.language-row {
+  color: rgba(255,255,255,.82);
+}
+
+.radial-meter span {
+  background: #fff;
+  color: var(--primary);
+}
+
+.offline-pill,
+.set-chip,
+.user-chip,
+.brand-mark,
+.tag,
+.nav-item.active,
+.table-actions button,
+.back-btn {
+  color: #fff;
+  background: linear-gradient(135deg, #1984ff, #005df5);
+}
+
+.language-select,
+.secondary-action,
+.icon-text-btn {
+  color: var(--primary);
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(219,231,245,.9);
+  backdrop-filter: blur(14px);
+}
+
+.section-heading,
+.panel-title-row {
+  position: relative;
+}
+
+.section-heading::before,
+.panel-title-row::before {
+  content: "";
+  width: 64px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary));
+}
+
+.panel-illustration,
+.progress-illustration,
+.pose-card,
+.generated-step-image,
+.generated-step-fallback,
+.hero-illustration {
+  border-radius: 18px;
+  box-shadow: 0 22px 50px rgba(7,21,43,.16);
+}
+
+.panel-illustration {
+  border-radius: 18px 46px 18px 46px;
+}
+
+.progress-track,
+.mini-progress,
+.adherence-bar {
+  background: #d7e8ff;
+}
+
+.progress-fill,
+.mini-progress span,
+.adherence-bar span {
+  background: linear-gradient(90deg, #1984ff, #005df5);
+}
+
+.coach-note,
+.warning-note,
+.form-alert,
+.image-generation-status {
+  color: #12315f;
+  background: rgba(234,244,255,.86);
+  border-color: #cfe0ff;
+  backdrop-filter: blur(12px);
+}
+
+.login-page {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(10,115,255,.2), transparent 28%),
+    radial-gradient(circle at 80% 100%, rgba(10,115,255,.14), transparent 30%),
+    #f7fbff;
+}
+
+.input-group input,
+.form-group input,
+.form-group select,
+.config-field input,
+.search-bar input,
+.share-link-box input {
+  color: var(--ink);
+  background: rgba(255,255,255,.86);
+  border-color: #dbe7f5;
+}
+
+.patient-nav {
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -18px 44px rgba(7,21,43,.16);
+}
+
+@keyframes novaGlow {
+  0%, 100% { box-shadow: 0 16px 34px rgba(10,115,255,.24); }
+  50% { box-shadow: 0 22px 52px rgba(10,115,255,.38); }
+}
+
+.hero-cta,
+.primary-action,
+.create-plan-btn,
+.voice-action-btn {
+  animation: novaGlow 4.2s ease-in-out infinite;
+}

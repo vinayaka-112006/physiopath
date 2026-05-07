@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Pill, Mail, Lock, Loader2 } from 'lucide-react';
+import { Loader2, Lock, Mail, Pill, User } from 'lucide-react';
+import api from '../api/client';
+import { useAuth } from '../context/AuthContext';
 
-const LoginPage = () => {
+const RegisterPage = () => {
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -13,15 +14,17 @@ const LoginPage = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         setError('');
         setLoading(true);
+
         try {
+            await api.post('/auth/register', { name, email, password });
             await login(email, password);
             navigate('/dashboard');
         } catch (err) {
-            setError(err.response?.data?.message || 'Login failed. Please try again.');
+            setError(err.response?.data?.message || 'Registration failed. Please try another email.');
         } finally {
             setLoading(false);
         }
@@ -29,7 +32,7 @@ const LoginPage = () => {
 
     return (
         <div className="login-page">
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="login-card"
@@ -38,46 +41,58 @@ const LoginPage = () => {
                     <div className="logo-icon">
                         <Pill size={40} color="#1A7A4A" />
                     </div>
-                    <h1>PhysioPath</h1>
-                    <p>Therapist Portal Access</p>
+                    <h1>Create Account</h1>
+                    <p>Therapist access for PhysioPath</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="login-form">
                     {error && <div className="error-message">{error}</div>}
-                    
+
+                    <div className="input-group">
+                        <label><User size={18} /> Full Name</label>
+                        <input
+                            type="text"
+                            placeholder="Dr. Meena Sharma"
+                            value={name}
+                            onChange={(event) => setName(event.target.value)}
+                            required
+                        />
+                    </div>
+
                     <div className="input-group">
                         <label><Mail size={18} /> Email Address</label>
-                        <input 
-                            type="email" 
-                            placeholder="doctor@physiopath.com" 
+                        <input
+                            type="email"
+                            placeholder="doctor@physiopath.com"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(event) => setEmail(event.target.value)}
                             required
                         />
                     </div>
 
                     <div className="input-group">
                         <label><Lock size={18} /> Password</label>
-                        <input 
-                            type="password" 
-                            placeholder="••••••••" 
+                        <input
+                            type="password"
+                            placeholder="Minimum 6 characters"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(event) => setPassword(event.target.value)}
                             required
+                            minLength={6}
                         />
                     </div>
 
                     <button type="submit" disabled={loading} className="login-btn">
-                        {loading ? <Loader2 className="spin" /> : 'Sign In'}
+                        {loading ? <Loader2 className="spin" /> : 'Create Account'}
                     </button>
                 </form>
 
                 <div className="login-footer">
-                    <p>New to PhysioPath? <Link to="/register">Create therapist account</Link></p>
+                    <p>Already registered? <Link to="/login">Sign in</Link></p>
                 </div>
             </motion.div>
         </div>
     );
 };
 
-export default LoginPage;
+export default RegisterPage;

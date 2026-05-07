@@ -1,0 +1,20 @@
+<svg width="760" height="520" viewBox="0 0 760 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="760" height="520" rx="28" fill="#F7FAFC"/>
+  <path d="M0 0h760v520H0z" fill="url(#c)"/>
+  <rect x="78" y="90" width="330" height="300" rx="26" fill="#0A1A30"/>
+  <rect x="112" y="124" width="262" height="160" rx="18" fill="#123861"/>
+  <path d="M142 246c34-54 70-58 108-12 36 44 70 30 100-42" stroke="#3ED5F5" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="504" cy="178" r="46" fill="#F0B17F"/>
+  <path d="M462 176c10-48 56-66 94-34-2 30-26 50-58 50-14 0-26-5-36-16Z" fill="#17233C"/>
+  <path d="M434 278c12-58 52-88 106-88s94 30 106 88l24 116H410l24-116Z" fill="#B9FF1D"/>
+  <path d="M456 304h168" stroke="#0A1A30" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="210" cy="354" r="30" fill="#F0B17F"/>
+  <path d="M162 428c8-44 38-66 78-66s70 22 78 66H162Z" fill="#F06F45"/>
+  <circle cx="330" cy="354" r="30" fill="#F0B17F"/>
+  <path d="M282 428c8-44 38-66 78-66s70 22 78 66H282Z" fill="#2F8DB3"/>
+  <defs>
+    <pattern id="c" width="58" height="58" patternUnits="userSpaceOnUse">
+      <path d="M58 0H0v58" stroke="#BFC8D2" stroke-width="1" opacity=".28"/>
+    </pattern>
+  </defs>
+</svg>

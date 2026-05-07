@@ -10,6 +10,7 @@ const exerciseSchema = new mongoose.Schema({
     id: { type: String, required: true },
     name: { type: String, required: true },
     muscleGroup: { type: String },
+    description: { type: String },
     sets: { type: Number, required: true },
     reps: { type: Number, required: true },
     restSeconds: { type: Number, default: 30 },

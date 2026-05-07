@@ -6,7 +6,8 @@ const User = require('../models/User');
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const normalizedEmail = String(email || '').trim().toLowerCase();
+        const user = await User.findOne({ email: normalizedEmail });
         if (!user || !(await user.comparePassword(password))) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
@@ -21,7 +22,12 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        const user = new User({ name, email, password });
+        const normalizedEmail = String(email || '').trim().toLowerCase();
+        const existingUser = await User.findOne({ email: normalizedEmail });
+        if (existingUser) {
+            return res.status(409).json({ message: 'Email already registered' });
+        }
+        const user = new User({ name, email: normalizedEmail, password });
         await user.save();
         res.status(201).json({ message: 'User created' });
     } catch (error) {

@@ -33,6 +33,18 @@ router.post('/', protect, async (req, res) => {
     }
 });
 
+// Get all plans for the logged-in therapist
+router.get('/', protect, async (req, res) => {
+    try {
+        const plans = await Plan.find({ therapistId: req.user.id })
+            .sort({ createdAt: -1 })
+            .select('token patientName durationWeeks exercises createdAt updatedAt');
+        res.json(plans);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Get a plan by token (Patient - No auth required as per PRD)
 router.get('/:token', async (req, res) => {
     try {

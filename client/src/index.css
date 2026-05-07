@@ -1,23 +1,7 @@
-:root {
-  --primary: #1A7A4A;
-  --primary-dark: #125A36;
-  --secondary: #2C3E50;
-  --accent: #E3F2FD;
-  --error: #C0392B;
-  --text: #2C3E50;
-  --bg: #F8F9FA;
+html {
+  background: #f6faf8;
 }
 
-body {
-  margin: 0;
-  font-family: 'Arial', sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
-  -webkit-font-smoothing: antialiased;
-}
-
-.app-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+a {
+  color: inherit;
 }
