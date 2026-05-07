@@ -14,7 +14,7 @@ export default defineConfig({
         type: "module",
       },
       includeAssets: [
-<<<<<<< HEAD
+
         "favicon.svg",
         "icons.svg",
         "quadsets.jpeg",
@@ -39,7 +39,6 @@ export default defineConfig({
         "medical-therapy-hero.svg",
         "physio-device-hero.svg",
         "therapy-team.svg",
-=======
 
         'favicon.svg',
         'icons.svg',
@@ -66,7 +65,7 @@ export default defineConfig({
         'physio-device-hero.svg',
         'therapy-team.svg',
 
->>>>>>> 3d4a67cb230131e2dd204864aaac8543ae4a7400
+
         "favicon.svg",
         "icons.svg",
         "quadsets.jpeg",
