@@ -14,6 +14,7 @@ export default defineConfig({
         type: "module",
       },
       includeAssets: [
+<<<<<<< HEAD
         "favicon.svg",
         "icons.svg",
         "quadsets.jpeg",
@@ -38,6 +39,34 @@ export default defineConfig({
         "medical-therapy-hero.svg",
         "physio-device-hero.svg",
         "therapy-team.svg",
+=======
+
+        'favicon.svg',
+        'icons.svg',
+        'quadsets.jpeg',
+        'glutebridges.jpeg',
+        'wallslides.jpeg',
+        'anklepumps.jpeg',
+        'legraises.jpeg',
+        'straightlegraises.jpeg',
+        'clamshells.jpeg',
+        'seatedkneeExtension.jpeg',
+        'exercisesgif/anklepumps.mp4',
+        'exercisesgif/clamshells.mp4',
+        'exercisesgif/glutebridges.mp4',
+        'exercisesgif/heelslides.mp4',
+        'exercisesgif/quadsets.mp4',
+        'exercisesgif/seatedkneeExtension.mp4',
+        'exercisesgif/straightlegraise.mp4',
+        'exercisesgif/wallslides.mp4',
+        'medical-plan.svg',
+        'medical-progress.svg',
+        'medical-tech-hero.svg',
+        'medical-therapy-hero.svg',
+        'physio-device-hero.svg',
+        'therapy-team.svg',
+
+>>>>>>> 3d4a67cb230131e2dd204864aaac8543ae4a7400
         "favicon.svg",
         "icons.svg",
         "quadsets.jpeg",

@@ -11,12 +11,18 @@ const app = express();
 
 app.use(
   cors({
+<<<<<<< HEAD
     origin: [
       "https://physiopath-client.onrender.com",
       "https://physiopath-client-vsr2.onrender.com",
     ],
     credentials: true,
   }),
+=======
+    origin: "https://physiopath-client-vsr2.onrender.com",
+    credentials: true,
+  })
+>>>>>>> 3d4a67cb230131e2dd204864aaac8543ae4a7400
 );
 app.use(express.json());
 
