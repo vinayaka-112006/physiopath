@@ -1,6 +1,10 @@
-# PhysioPath
+# PhysioPath 🩺
 
-PhysioPath is an offline-first physiotherapy exercise card system built for a hackathon. It helps doctors create guided rehabilitation plans and share them with patients through a QR code or direct link. Patients can follow exercises, view illustrations, track reps, use voice/manual rep counting, log progress, and continue using the app even without internet after the first load.
+> An offline-first physiotherapy exercise card system that bridges the gap between doctors and patients through guided rehabilitation plans, voice-assisted rep counting, and QR-based plan sharing.
+
+**Live Demo:** [physiopath-sandy.vercel.app](https://physiopath-sandy.vercel.app)
+
+---
 
 ## Table of Contents
 
@@ -8,486 +12,453 @@ PhysioPath is an offline-first physiotherapy exercise card system built for a ha
 - [Core Features](#core-features)
 - [User Roles](#user-roles)
 - [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
 - [Architecture](#architecture)
 - [Offline-First Patient Experience](#offline-first-patient-experience)
 - [Doctor Features](#doctor-features)
 - [Patient Features](#patient-features)
-- [AI and Media Features](#ai-and-media-features)
-- [Authentication and Verification](#authentication-and-verification)
+- [AI & Media Features](#ai--media-features)
+- [Authentication & Verification](#authentication--verification)
 - [Analytics](#analytics)
-- [API Summary](#api-summary)
-- [Project Structure](#project-structure)
+- [API Reference](#api-reference)
 - [Environment Variables](#environment-variables)
-- [Setup Instructions](#setup-instructions)
+- [Setup & Installation](#setup--installation)
 - [Demo Registration](#demo-registration)
-- [Known Notes](#known-notes)
+- [Demo Flow](#demo-flow)
+- [Known Limitations](#known-limitations)
+- [License](#license)
+
+---
 
 ## Overview
 
-PhysioPath solves a common physiotherapy problem: patients often forget exercise steps, perform movements incorrectly, or lose access to instructions when offline. The platform gives doctors a simple plan builder and gives patients a no-login, mobile-first, offline-ready exercise experience.
+PhysioPath solves a critical problem in physiotherapy: **patients forget exercise steps, perform movements incorrectly, or lose access to instructions when offline.**
 
-Doctors create exercise prescriptions with sets, reps, rest time, steps, mistakes, and images. Each plan generates a patient URL and QR code. Patients open the link once, and the plan is stored locally for offline use.
+The platform provides:
+- Doctors with a simple, intuitive plan builder
+- Patients with a no-login, mobile-first, offline-ready exercise experience
+
+Doctors create exercise prescriptions with sets, reps, rest time, step-by-step instructions, common mistakes, and images. Each plan automatically generates a patient URL and QR code. Patients open the link once — the plan is then cached locally for full offline use.
+
+---
 
 ## Core Features
 
-- Doctor registration and login
-- NMC-style medical license verification flow with demo fallback
-- Doctor dashboard with plans, patients, progress, completed records, analytics, and profile
-- Patient plan creation with QR/share link
-- Patient exercise dashboard
-- Exercise detail pages with multilingual content
-- Offline-ready exercise images
-- Guided workout mode
-- Manual rep counting
-- Voice-based rep counting using the browser SpeechRecognition API
-- Sequential rep validation to prevent skipping reps
-- Patient progress tracking
-- Completed-patient tracking
-- Patient rating system that updates the doctor profile
-- Contact doctor button using direct phone dialer
-- Doctor profile with editable DB-backed data
-- PWA service worker and IndexedDB storage for offline patient access
+| Feature | Description |
+|---|---|
+| 🔐 Doctor Auth | Registration, login, and NMC-style license verification |
+| 📋 Plan Builder | Create and edit patient exercise plans with full detail |
+| 📱 QR Code Sharing | Each plan generates a shareable URL and scannable QR code |
+| 🌐 Offline Support | PWA + IndexedDB enables full offline patient access after first load |
+| 🎙️ Voice Rep Counting | Browser SpeechRecognition API for hands-free rep tracking |
+| 🔢 Manual Rep Counting | Sequential rep validation to prevent skipping |
+| 📊 Doctor Analytics | Charts and stats backed by real MongoDB data |
+| ⭐ Patient Rating | Patients rate doctors; ratings update the doctor's profile |
+| 📞 Contact Doctor | Direct phone dialer button on patient dashboard |
+| 🌍 Multilingual Content | Language selector on patient exercise pages |
+
+---
 
 ## User Roles
 
-### Doctor
+### 👨‍⚕️ Doctor
 
-Doctors can:
-
-- Register and verify account
-- Log in securely
-- Create patient exercise plans
-- Edit patient exercise details
-- Delete patient plans
-- Generate QR codes
-- View patient progress
-- View completed patients
-- View analytics charts
+- Register and verify account via NMC-style license flow
+- Log in securely with JWT
+- Create, edit, and delete patient exercise plans
+- Generate QR codes and shareable plan links
+- View patient progress, completed plans, and ratings
+- Access analytics dashboard
 - Edit profile details
-- See patient ratings on profile
 
-### Patient
+### 🧑‍🦯 Patient (No login required)
 
-Patients can:
-
-- Open a shared plan link without login
-- Use the app offline after first load
-- View prescribed exercises
-- View exercise details and images
-- Select language
-- Listen to exercise explanation
+- Open a shared plan link without any account
+- Use the app fully offline after first load
+- View prescribed exercises with images and step-by-step guidance
+- Select preferred language and listen to audio explanations
 - Start guided workout mode
-- Count reps manually
-- Count reps by voice
-- Track daily progress
-- Rate the doctor
+- Count reps manually or by voice
+- Track daily progress and streaks
+- Rate the treating doctor
 - Call the doctor directly
-- Access the same plan using QR code
+
+---
 
 ## Tech Stack
 
 ### Frontend
 
-- React
-- Vite
-- React Router
-- CSS and Tailwind-style utility classes
-- Lucide React icons
-- Framer Motion
-- Dexie.js for IndexedDB
-- vite-plugin-pwa for PWA service worker
-- qrcode.react for QR generation
-- Three.js for landing page 3D scene
+| Technology | Purpose |
+|---|---|
+| React + Vite | Core framework and build tool |
+| React Router | Client-side routing |
+| Framer Motion | Animations and transitions |
+| Three.js | 3D landing page scene |
+| Dexie.js | IndexedDB wrapper for offline storage |
+| vite-plugin-pwa | PWA service worker generation |
+| qrcode.react | QR code generation |
+| Lucide React | Icon library |
 
 ### Backend
 
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- JWT authentication
-- bcryptjs password hashing
+| Technology | Purpose |
+|---|---|
+| Node.js + Express.js | REST API server |
+| MongoDB + Mongoose | Database and ODM |
+| JWT | Token-based authentication |
+| bcryptjs | Password hashing |
+
+---
+
+## Project Structure
+physiopath/
+├── client/
+│   ├── public/
+│   │   ├── exercise images (offline-cached)
+│   │   └── medical illustrations
+│   └── src/
+│       ├── api/              # Axios API calls
+│       ├── components/       # Reusable UI components
+│       ├── context/          # React Context providers
+│       ├── data/             # Static exercise data
+│       ├── db/               # Dexie IndexedDB setup
+│       ├── pages/            # Route-level page components
+│       ├── App.jsx
+│       └── App.css
+│
+└── server/
+├── models/
+│   ├── User.js
+│   ├── Plan.js
+│   └── CompletedPlan.js
+├── routes/
+│   ├── authRoutes.js
+│   ├── planRoutes.js
+│   └── geminiRoutes.js
+└── index.js
+
+---
 
 ## Architecture
-
-```text
 PhysioPath
-├── client
-│   ├── React + Vite frontend
-│   ├── PWA service worker
-│   ├── IndexedDB patient storage
-│   └── Patient and doctor UI
+├── client (React + Vite)
+│   ├── PWA service worker → caches app shell + public assets
+│   ├── IndexedDB (Dexie) → stores patient plan locally
+│   └── Doctor & Patient UI
 │
-└── server
-    ├── Express API
-    ├── MongoDB models
-    ├── Auth routes
-    ├── Plan routes
-    └── Doctor verification and rating logic
-```
+└── server (Express + MongoDB)
+├── Auth routes (register / login / profile)
+├── Plan routes (CRUD + progress + rating)
+└── Gemini route (AI image fallback)
+
+---
 
 ## Offline-First Patient Experience
 
-PhysioPath is designed so patients are not blocked by poor internet connectivity.
+PhysioPath is designed so patients are **never blocked by poor connectivity**.
 
 ### How it works
 
-1. The patient opens the shared plan link once while online.
-2. The plan is fetched from the backend.
-3. The plan is stored locally in IndexedDB using Dexie.
-4. The PWA service worker caches the app shell and public assets.
-5. Exercise images are served from the local `public` folder and included in the PWA cache.
-6. Patient progress is saved locally first.
-7. When online, progress and completion can sync back to the backend.
+1. Patient opens the shared plan link while online.
+2. Plan data is fetched from the backend.
+3. Plan is saved locally to **IndexedDB** via Dexie.
+4. PWA service worker caches the app shell and all public assets.
+5. Exercise images (served from `client/public`) are included in the PWA cache.
+6. Progress is saved locally first, then synced when online.
 
-### Offline capabilities
+### What works offline
 
-Patients can use these features offline after first load:
+✅ Patient dashboard  
+✅ Exercise list and details  
+✅ Exercise images  
+✅ Guided workout mode  
+✅ Manual rep counting  
+✅ Local progress tracking  
 
-- View patient dashboard
-- View exercise list
-- View exercise details
-- View exercise images
-- Run guided workout mode
-- Track completed exercises
-- View local progress history
-- Use manual rep counting
+### Requires internet
 
-Online sync is needed for:
+🔄 First-time plan fetch  
+🔄 Syncing completion status to doctor dashboard  
+🔄 Submitting doctor rating  
 
-- Sending completed status to the doctor dashboard
-- Updating doctor rating
-- Fetching a plan for the first time
+---
 
 ## Doctor Features
 
-### Dashboard
+### Dashboard Tabs
 
-The doctor dashboard includes:
-
-- Plans tab
-- Patients tab
-- Progress tab
-- Completed tab
-- Analytics tab
-- Profile route
+| Tab | Content |
+|---|---|
+| Plans | All created patient plans |
+| Patients | Patient list |
+| Progress | Real-time progress from patient syncs |
+| Completed | Fully completed patient recoveries |
+| Analytics | Charts backed by MongoDB data |
 
 ### Plan Builder
 
-Doctors can create and edit plans with:
-
-- Patient name
-- Duration in weeks
-- Exercise selection
-- Sets
-- Reps
-- Rest seconds
-- Step instructions
-- Common mistakes
+Doctors can configure:
+- Patient name and recovery duration (weeks)
+- Exercise selection from a library
+- Sets, reps, rest duration (seconds)
+- Step-by-step instructions
+- Common mistakes to avoid
 - Exercise images
 
-### QR and Share Link
+### QR & Share Link
 
-Each plan produces:
+Each plan generates:
+- A shareable patient URL: `/patient/:token`
+- A scannable QR code
+- A copy-link option
 
-- Shareable patient URL
-- QR code
-- Copy link option
-
-The QR code points to:
-
-```text
-/patient/:token
-```
-
-When scanned, it opens the patient plan if the app and backend are reachable.
+---
 
 ## Patient Features
 
 ### Patient Dashboard
 
-Patients can see:
-
-- Greeting
+- Personalized greeting
 - Daily completion percentage
-- Current streak
+- Recovery streak counter
 - Recovery plan timeline
-- Exercise list
+- Full exercise list
 - Language selector
-- Contact doctor button
-- Plan QR code
+- Contact doctor (direct phone dialer)
+- Plan QR code for re-access
 - Doctor rating card
 
-### Exercise Details
-
-Exercise details include:
+### Exercise Detail Page
 
 - Main exercise image
-- Sets, reps, rest
-- Step-by-step text
-- Mistakes to avoid
+- Sets / reps / rest info
+- Step-by-step instructions
+- Common mistakes to avoid
 - Voice explanation button
 
 ### Guided Workout Mode
 
-The workout mode includes:
-
-- Countdown
-- Active rep counter
-- Rest timer
-- Completion screen
-- Manual rep counting
-- Voice rep counting
+- Countdown before each set
+- Active rep counter (manual + voice)
+- Rest timer between sets
+- Completion screen with progress save
 
 ### Voice Rep Counting
 
-The app uses the browser SpeechRecognition API.
+The app uses the browser's native `SpeechRecognition` API.
 
-Behavior:
+- **Language:** `en-US`
+- **Mode:** Continuous listening, no interim results
+- **Accepts:** Number words (`one`, `two`, `three`) and digits (`1`, `2`, `3`)
+- **Validation:** Sequential — skipping reps triggers a warning
+- Manual counting is always available as a fallback
 
-- Language: `en-US`
-- Continuous listening: enabled
-- Interim results: disabled
-- Accepts number words such as `one`, `two`, `three`
-- Accepts digits such as `1`, `2`, `3`
-- Only accepts reps in sequence
-- Shows a warning if the patient skips a rep
-- Manual counting remains available at all times
+---
 
-## AI and Media Features
+## AI & Media Features
 
-PhysioPath supports:
+- **Offline Exercise Images** served from `client/public` and PWA-cached
+- **Gemini AI Endpoint** (`POST /api/gemini/exercise-images`) as an image generation fallback/prototype
+- **Three.js 3D Scene** on the landing page
 
-- Offline exercise images from `client/public`
-- Gemini image generation endpoint as a fallback/prototype feature
-- Generated/fallback exercise visuals
-- 3D landing page scene using Three.js
+### Built-in Offline Exercise Library
 
-Current offline exercise images include:
+| Exercise |
+|---|
+| Quad Sets |
+| Glute Bridges |
+| Wall Slides |
+| Ankle Pumps |
+| Heel Slides |
+| Straight Leg Raise |
+| Clamshells |
+| Seated Knee Extension |
 
-- Quad Sets
-- Glute Bridges
-- Wall Slides
-- Ankle Pumps
-- Heel Slides
-- Straight Leg Raise
-- Clamshells
-- Seated Knee Extension
+---
 
-## Authentication and Verification
+## Authentication & Verification
 
 ### Doctor Registration
 
-Registration collects:
-
+Collects:
 - Full name
-- Email
-- Password
+- Email and password
 - Medical License Number
 - State Medical Council
-- Profile photo URL or uploaded image
+- Profile photo (URL or upload)
 
-### License Verification
+### License Verification Flow
 
-The backend includes an NMC-style verification flow:
+1. Backend maps the State Medical Council to an NMC `smcId`
+2. Calls the NMC public verification endpoint
+3. Cross-checks the submitted registration number
+4. Creates the account only on successful verification
 
-- Maps State Medical Council to NMC `smcId`
-- Calls the NMC public endpoint
-- Verifies matching registration number
-- Creates account only if verification succeeds
-
-For hackathon/demo use, license numbers starting with `DEMO` are accepted locally to avoid public service downtime blocking the demo.
+> **Demo bypass:** License numbers starting with `DEMO` are accepted locally to prevent NMC service downtime from blocking hackathon demos.
 
 ### Login
 
-Login uses:
+- Email + password authentication
+- `bcryptjs` password comparison
+- JWT token issued on success
+- Verified account check enforced
 
-- Email/password
-- bcrypt password comparison
-- JWT token
-- Verified account check
+---
 
 ## Analytics
 
-The Analytics tab uses real DB-backed data from patient plans.
+The Analytics tab displays real MongoDB-backed data:
 
-It displays:
+- 📈 Patient growth chart
+- 📊 Plan status breakdown (Pending / In-Progress / Completed)
+- 💪 Most prescribed muscle groups
+- 📅 Plans shared this week
+- 🏃 Active exercise count
+- ✅ Completed recovery count
 
-- Patient growth chart
-- Pending, in-progress, and completed status graph
-- Most prescribed muscle groups
-- Plans shared this week
-- Active exercise count
-- Completed recovery count
-
-Progress is synced from the patient app to MongoDB using plan progress fields:
-
+Progress is synced from the patient app using the following plan fields:
 - `completedExerciseIds`
 - `progressPercent`
 - `status`
 - `lastProgressAt`
 
-## API Summary
+---
 
-### Auth
+## API Reference
 
-```text
-POST /api/auth/register
-POST /api/auth/login
-GET  /api/auth/me
-PUT  /api/auth/me
-```
+### Auth Routes
+POST  /api/auth/register    → Register a new doctor
+POST  /api/auth/login       → Login and receive JWT
+GET   /api/auth/me          → Get current doctor profile
+PUT   /api/auth/me          → Update doctor profile
 
-### Plans
+### Plan Routes
+GET    /api/plans                     → List all plans for logged-in doctor
+POST   /api/plans                     → Create a new patient plan
+GET    /api/plans/:token              → Fetch a patient plan (public)
+PUT    /api/plans/:token              → Update plan details
+DELETE /api/plans/:token              → Delete a plan
+GET    /api/plans/completed           → List completed plans
+POST   /api/plans/:token/progress     → Sync patient progress
+POST   /api/plans/:token/complete     → Mark plan as complete
+POST   /api/plans/:token/rate         → Submit a doctor rating
 
-```text
-GET    /api/plans
-POST   /api/plans
-GET    /api/plans/:token
-PUT    /api/plans/:token
-DELETE /api/plans/:token
-GET    /api/plans/completed
-POST   /api/plans/:token/progress
-POST   /api/plans/:token/complete
-POST   /api/plans/:token/rate
-```
+### Gemini Route
+POST /api/gemini/exercise-images    → AI image generation (optional/prototype)
 
-### Gemini
-
-```text
-POST /api/gemini/exercise-images
-```
-
-## Project Structure
-
-```text
-NCETHackathon
-├── client
-│   ├── public
-│   │   ├── exercise images
-│   │   └── medical illustrations
-│   └── src
-│       ├── api
-│       ├── components
-│       ├── context
-│       ├── data
-│       ├── db
-│       ├── pages
-│       ├── App.jsx
-│       └── App.css
-│
-└── server
-    ├── models
-    │   ├── User.js
-    │   ├── Plan.js
-    │   └── CompletedPlan.js
-    ├── routes
-    │   ├── authRoutes.js
-    │   ├── planRoutes.js
-    │   └── geminiRoutes.js
-    └── index.js
-```
+---
 
 ## Environment Variables
 
-Create a `.env` file inside `server`.
+Create a `.env` file inside the `server/` directory:
 
 ```env
 MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
+JWT_SECRET=your_jwt_secret_key
 PORT=5000
 GEMINI_API_KEY=your_gemini_api_key_optional
 ```
 
-Optional frontend environment:
+Optional frontend variable (create `.env` inside `client/`):
 
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
-## Setup Instructions
+---
 
-### 1. Install frontend dependencies
+## Setup & Installation
+
+### Prerequisites
+
+- Node.js v18+
+- MongoDB (local or Atlas)
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/vinayaka-112006/physiopath.git
+cd physiopath
+```
+
+### 2. Install frontend dependencies
 
 ```bash
 cd client
 npm install
 ```
 
-### 2. Install backend dependencies
+### 3. Install backend dependencies
 
 ```bash
-cd server
+cd ../server
 npm install
 ```
 
-### 3. Start backend
+### 4. Configure environment
+
+Create `server/.env` with your MongoDB URI and JWT secret (see [Environment Variables](#environment-variables)).
+
+### 5. Start the backend
 
 ```bash
 cd server
 npm run dev
+# Runs on http://localhost:5000
 ```
 
-Backend runs on:
-
-```text
-http://localhost:5000
-```
-
-### 4. Start frontend
+### 6. Start the frontend
 
 ```bash
 cd client
 npm run dev
+# Runs on http://127.0.0.1:5173
 ```
 
-Frontend runs on:
-
-```text
-http://127.0.0.1:5173
-```
+---
 
 ## Demo Registration
 
-For hackathon testing, use a demo license number.
-
-```text
-Full Name: Dr Demo Physio
-Email: demo.physio1@physiopath.com
-Password: password123
+Use the following details for hackathon/demo testing:
+Full Name:              Dr Demo Physio
+Email:                  demo.physio1@physiopath.com
+Password:               password123
 Medical License Number: DEMO12345
-State Medical Council: Karnataka
-```
+State Medical Council:  Karnataka
 
-If the email already exists, change only the email.
+> If the email already exists, increment the number: `demo.physio2@physiopath.com`
 
-Example:
-
-```text
-demo.physio2@physiopath.com
-```
+---
 
 ## Demo Flow
 
-1. Register or log in as doctor.
-2. Create a patient plan.
-3. Add exercises.
-4. Save the plan.
-5. Copy the patient URL or scan the QR code.
-6. Open patient link.
-7. Complete exercises manually or using voice rep counting.
-8. View progress in doctor dashboard.
-9. Rate doctor from patient dashboard.
-10. View updated rating in doctor profile.
+1. Register or log in as a doctor using the demo credentials.
+2. Create a new patient plan from the dashboard.
+3. Add exercises with sets, reps, rest time, and instructions.
+4. Save the plan — a patient URL and QR code are generated.
+5. Copy the patient URL or scan the QR code to open the patient view.
+6. Complete exercises using manual or voice rep counting.
+7. Return to the doctor dashboard to view synced progress.
+8. Rate the doctor from the patient dashboard.
+9. View the updated rating in the doctor profile.
 
-## Known Notes
+---
 
-- Patient offline mode works after the first successful online load.
-- Voice rep counting depends on browser SpeechRecognition support.
-- NMC public verification can be unavailable; demo license numbers beginning with `DEMO` bypass this for hackathon testing.
-- Patient completion and ratings require internet to sync to MongoDB.
-- Existing old plans may show pending until patient progress syncs again.
+## Known Limitations
+
+- **Offline mode** requires at least one successful online load to populate the local cache.
+- **Voice rep counting** depends on browser `SpeechRecognition` support (works best in Chrome).
+- **NMC verification** can be unavailable externally; `DEMO` license numbers bypass this for testing.
+- **Patient completion and ratings** require internet to sync to MongoDB.
+- Older plans may show as pending until patient progress re-syncs.
+
+---
 
 ## License
 
 This project was created for hackathon demonstration and educational purposes.
+
+---
+
+*Built with ❤️ for NCET Hackathon by team Synapse sqad*
