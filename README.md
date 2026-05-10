@@ -460,5 +460,3 @@ State Medical Council:  Karnataka
 This project was created for hackathon demonstration and educational purposes.
 
 ---
-
-*Built with ❤️ for NCET Hackathon by team Synapse sqad*
